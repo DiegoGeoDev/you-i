@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { toast as sonnerToast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -54,6 +54,8 @@ function DrawSinglePointProvider({
 
   const editorRef = useRef<SinglePointEditor>();
 
+  const [innerIsActive, setInnerIsActive] = useState(false);
+
   const isModify = value !== undefined;
 
   // set vectorSourceRef\vectorLayerRef
@@ -78,6 +80,8 @@ function DrawSinglePointProvider({
     if (handleActiveChange) {
       handleActiveChange(false);
     }
+    setInnerIsActive(false);
+
     sonnerToast.dismiss(toastId);
   }
 
@@ -87,6 +91,7 @@ function DrawSinglePointProvider({
     if (handleActiveChange) {
       handleActiveChange(true);
     }
+    setInnerIsActive(true);
 
     sonnerToast(toastOptions?.title || "Single Point", {
       id: toastId,
@@ -107,7 +112,7 @@ function DrawSinglePointProvider({
   }
 
   const drawSinglePointvalue = {
-    isActive,
+    isActive: isActive !== undefined ? isActive : innerIsActive,
     handleDrawSinglePoint,
     handleClearSinglePoint,
   };

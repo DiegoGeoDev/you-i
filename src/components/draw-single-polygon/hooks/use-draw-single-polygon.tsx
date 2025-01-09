@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { toast as sonnerToast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -54,6 +54,8 @@ function DrawSinglePolygonProvider({
 
   const editorRef = useRef<SinglePolygonEditor>();
 
+  const [innerIsActive, setInnerIsActive] = useState(false);
+
   const isModify = value !== undefined;
 
   // set vectorSourceRef\vectorLayerRef
@@ -82,6 +84,8 @@ function DrawSinglePolygonProvider({
     if (handleActiveChange) {
       handleActiveChange(false);
     }
+    setInnerIsActive(false);
+
     sonnerToast.dismiss(toastId);
   }
 
@@ -91,6 +95,7 @@ function DrawSinglePolygonProvider({
     if (handleActiveChange) {
       handleActiveChange(true);
     }
+    setInnerIsActive(true);
 
     sonnerToast(toastOptions?.title || "Single Polygon", {
       id: toastId,
@@ -111,7 +116,7 @@ function DrawSinglePolygonProvider({
   }
 
   const drawSinglePolygonvalue = {
-    isActive,
+    isActive: isActive !== undefined ? isActive : innerIsActive,
     handleDrawSinglePolygon,
     handleClearSinglePolygon,
   };
