@@ -7,9 +7,9 @@ import { useMap } from "@/components/map";
 
 import { SinglePolygonEditor } from "../utils";
 import {
-  PolygonOptions,
-  DrawOptions,
-  ToastOptions,
+  DrawSinglePolygonOptions,
+  DrawSinglePolygonDrawOptions,
+  DrawSinglePolygonToastOptions,
 } from "../draw-single-polygon";
 
 import { useComponentContext } from "./use-component-context";
@@ -18,9 +18,9 @@ const toastId = self.crypto.randomUUID();
 
 type DrawSinglePolygonProviderProps = {
   children: React.ReactNode;
-  polygonOptions: PolygonOptions;
-  drawOptions?: DrawOptions;
-  toastOptions?: ToastOptions;
+  polygonOptions: DrawSinglePolygonOptions;
+  drawOptions?: DrawSinglePolygonDrawOptions;
+  toastOptions?: DrawSinglePolygonToastOptions;
   isActive?: boolean;
   handleActiveChange?: (isActive: boolean) => void;
 };

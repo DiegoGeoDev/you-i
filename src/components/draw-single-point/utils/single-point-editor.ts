@@ -13,8 +13,8 @@ import { Feature as OlFeature } from "ol";
 
 import {
   DrawSinglePointValue,
-  PointOptions,
-  DrawOptions,
+  DrawSinglePointOptions,
+  DrawSinglePointDrawOptions,
 } from "../draw-single-point";
 
 class SinglePointEditor {
@@ -26,8 +26,8 @@ class SinglePointEditor {
 
   constructor(
     private map: OlMap,
-    private pointOptions: PointOptions,
-    private drawOptions?: DrawOptions
+    private pointOptions: DrawSinglePointOptions,
+    private drawOptions?: DrawSinglePointDrawOptions,
   ) {
     this.map = map;
 
@@ -55,7 +55,7 @@ class SinglePointEditor {
   }
 
   public clearVectorSource(
-    onChange: (value: DrawSinglePointValue | undefined) => void
+    onChange: (value: DrawSinglePointValue | undefined) => void,
   ) {
     this.vectorSource.clear();
     onChange(undefined);
@@ -69,7 +69,7 @@ class SinglePointEditor {
   public enableDrawing(
     isModify: boolean,
     onChange: (value: DrawSinglePointValue | undefined) => void,
-    onAbortDrawing: () => void
+    onAbortDrawing: () => void,
   ) {
     if (isModify) {
       this.map.addInteraction(this.modify);

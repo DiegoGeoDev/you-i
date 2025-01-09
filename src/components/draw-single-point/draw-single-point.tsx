@@ -16,26 +16,30 @@ import {
 
 type DrawSinglePointValue = OlCoordinate;
 type PointStyle = OlStyle | OlStyle[] | OlStyleFunction;
-type PointOptions = {
+type DrawSinglePointOptions = {
   zIndex: number;
   style?: PointStyle;
 };
-type DrawOptions = {
+type DrawSinglePointDrawOptions = {
   style?: PointStyle;
 };
-type ToastOptions = {
+type DrawSinglePointToastOptions = {
   title?: string;
   description?: string;
   buttonText?: string;
 };
 
-type DrawSinglePointWrapperProps = React.HTMLAttributes<HTMLDivElement> & {
+type DrawSinglePointHTMLDivElement = Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  "onChange"
+>;
+type DrawSinglePointWrapperProps = DrawSinglePointHTMLDivElement & {
   value: DrawSinglePointValue | undefined;
   onChange: (value: DrawSinglePointValue | undefined) => void;
   disabled?: boolean;
-  pointOptions: PointOptions;
-  drawOptions?: DrawOptions;
-  toastOptions?: ToastOptions;
+  pointOptions: DrawSinglePointOptions;
+  drawOptions?: DrawSinglePointDrawOptions;
+  toastOptions?: DrawSinglePointToastOptions;
   isActive?: boolean;
   handleActiveChange?: (isActive: boolean) => void;
 };
@@ -79,7 +83,11 @@ const DrawSinglePointWrapper = React.forwardRef<
           isActive={isActive}
           handleActiveChange={handleActiveChange}
         >
-          <div ref={ref} className={cn("flex gap-4", className)} {...props}>
+          <div
+            ref={ref}
+            className={cn("flex items-center gap-4", className)}
+            {...props}
+          >
             {children}
           </div>
         </DrawSinglePointProvider>
@@ -107,13 +115,16 @@ const DrawSinglePoint = React.forwardRef<
       ref={ref}
       type="button"
       variant="outline"
-      data-has-placeholder={placeholder !== undefined}
       className={cn("w-full", className)}
       onClick={handleDrawSinglePoint}
       disabled={isDisabled}
       {...props}
     >
-      <MapPin className="data-[has-placeholder=true]:mr-2" size="16" />
+      <MapPin
+        data-has-placeholder={placeholder !== undefined}
+        className="data-[has-placeholder=true]:mr-2"
+        size="16"
+      />
       {placeholder !== undefined ? placeholder : null}
     </Button>
   );
@@ -149,8 +160,8 @@ DrawSinglePointReset.displayName = "DrawSinglePointReset";
 
 export {
   type DrawSinglePointValue,
-  type PointOptions,
-  type DrawOptions,
-  type ToastOptions,
+  type DrawSinglePointOptions,
+  type DrawSinglePointDrawOptions,
+  type DrawSinglePointToastOptions,
 };
 export { DrawSinglePointWrapper, DrawSinglePoint, DrawSinglePointReset };

@@ -13,8 +13,8 @@ import { Feature as OlFeature } from "ol";
 
 import {
   DrawSinglePolygonValue,
-  PolygonOptions,
-  DrawOptions,
+  DrawSinglePolygonOptions,
+  DrawSinglePolygonDrawOptions,
 } from "../draw-single-polygon";
 
 class SinglePolygonEditor {
@@ -26,8 +26,8 @@ class SinglePolygonEditor {
 
   constructor(
     private map: OlMap,
-    private polygonOptions: PolygonOptions,
-    private drawOptions?: DrawOptions
+    private polygonOptions: DrawSinglePolygonOptions,
+    private drawOptions?: DrawSinglePolygonDrawOptions,
   ) {
     this.map = map;
 
@@ -55,7 +55,7 @@ class SinglePolygonEditor {
   }
 
   public clearVectorSource(
-    onChange: (value: DrawSinglePolygonValue | undefined) => void
+    onChange: (value: DrawSinglePolygonValue | undefined) => void,
   ) {
     this.vectorSource.clear();
     onChange(undefined);
@@ -69,7 +69,7 @@ class SinglePolygonEditor {
   public enableDrawing(
     isModify: boolean,
     onChange: (value: DrawSinglePolygonValue | undefined) => void,
-    onAbortDrawing: () => void
+    onAbortDrawing: () => void,
   ) {
     if (isModify) {
       this.map.addInteraction(this.modify);

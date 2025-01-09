@@ -6,7 +6,11 @@ import { Button } from "@/components/ui/button";
 import { useMap } from "@/components/map";
 
 import { SinglePointEditor } from "../utils";
-import { PointOptions, DrawOptions, ToastOptions } from "../draw-single-point";
+import {
+  DrawSinglePointOptions,
+  DrawSinglePointDrawOptions,
+  DrawSinglePointToastOptions,
+} from "../draw-single-point";
 
 import { useComponentContext } from "./use-component-context";
 
@@ -14,9 +18,9 @@ const toastId = self.crypto.randomUUID();
 
 type DrawSinglePointProviderProps = {
   children: React.ReactNode;
-  pointOptions: PointOptions;
-  drawOptions?: DrawOptions;
-  toastOptions?: ToastOptions;
+  pointOptions: DrawSinglePointOptions;
+  drawOptions?: DrawSinglePointDrawOptions;
+  toastOptions?: DrawSinglePointToastOptions;
   isActive?: boolean;
   handleActiveChange?: (isActive: boolean) => void;
 };

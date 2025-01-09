@@ -16,26 +16,30 @@ import {
 
 type DrawSinglePolygonValue = OlCoordinate[][];
 type PolygonStyle = OlStyle | OlStyle[] | OlStyleFunction;
-type PolygonOptions = {
+type DrawSinglePolygonOptions = {
   zIndex: number;
   style?: PolygonStyle;
 };
-type DrawOptions = {
+type DrawSinglePolygonDrawOptions = {
   style?: PolygonStyle;
 };
-type ToastOptions = {
+type DrawSinglePolygonToastOptions = {
   title?: string;
   description?: string;
   buttonText?: string;
 };
 
-type DrawSinglePolygonWrapperProps = React.HTMLAttributes<HTMLDivElement> & {
+type DrawSinglePolygonHTMLDivElement = Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  "onChange"
+>;
+type DrawSinglePolygonWrapperProps = DrawSinglePolygonHTMLDivElement & {
   value: DrawSinglePolygonValue | undefined;
   onChange: (value: DrawSinglePolygonValue | undefined) => void;
   disabled?: boolean;
-  polygonOptions: PolygonOptions;
-  drawOptions?: DrawOptions;
-  toastOptions?: ToastOptions;
+  polygonOptions: DrawSinglePolygonOptions;
+  drawOptions?: DrawSinglePolygonDrawOptions;
+  toastOptions?: DrawSinglePolygonToastOptions;
   isActive?: boolean;
   handleActiveChange?: (isActive: boolean) => void;
 };
@@ -79,7 +83,11 @@ const DrawSinglePolygonWrapper = React.forwardRef<
           isActive={isActive}
           handleActiveChange={handleActiveChange}
         >
-          <div ref={ref} className={cn("flex gap-4", className)} {...props}>
+          <div
+            ref={ref}
+            className={cn("flex gap-4 items-center", className)}
+            {...props}
+          >
             {children}
           </div>
         </DrawSinglePolygonProvider>
@@ -107,13 +115,16 @@ const DrawSinglePolygon = React.forwardRef<
       ref={ref}
       type="button"
       variant="outline"
-      data-has-placeholder={placeholder !== undefined}
       className={cn("w-full", className)}
       onClick={handleDrawSinglePolygon}
       disabled={isDisabled}
       {...props}
     >
-      <Pentagon className="data-[has-placeholder=true]:mr-2" size="16" />
+      <Pentagon
+        data-has-placeholder={placeholder !== undefined}
+        className="data-[has-placeholder=true]:mr-2"
+        size="16"
+      />
       {placeholder !== undefined ? placeholder : null}
     </Button>
   );
@@ -149,8 +160,8 @@ DrawSinglePolygonReset.displayName = "DrawSinglePolygonReset";
 
 export {
   type DrawSinglePolygonValue,
-  type PolygonOptions,
-  type DrawOptions,
-  type ToastOptions,
+  type DrawSinglePolygonOptions,
+  type DrawSinglePolygonDrawOptions,
+  type DrawSinglePolygonToastOptions,
 };
 export { DrawSinglePolygonWrapper, DrawSinglePolygon, DrawSinglePolygonReset };
