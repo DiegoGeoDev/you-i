@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -21,8 +21,11 @@ import {
 } from "@/components";
 
 import { useToast } from "@/hooks/use-toast";
-import { polygonStyle, drawStyle, drawPolygonStyleFunction } from "./ol-styles";
-import { StyleLike } from "ol/style/Style";
+import {
+  polygonStyle,
+  // drawStyle,
+  drawStyleFunction,
+} from "./ol-styles";
 
 const formSchema = z.object({
   singlePolygon: z.array(z.array(z.tuple([z.number(), z.number()]))).optional(),
@@ -31,7 +34,11 @@ const formSchema = z.object({
 const mapId = "draw-single-polygon";
 
 function DrawSinglePolygon() {
-  const mapRef = useRef(null);
+  const [isActive, setIsActive] = useState(false);
+
+  const handleActiveChange = (isActive: boolean) => {
+    setIsActive(isActive);
+  };
 
   const { toast } = useToast();
 
@@ -77,11 +84,7 @@ function DrawSinglePolygon() {
       <Card className="flex-1 grid p-6">
         <div className="flex flex-col gap-4 place-items-center">
           <MapProvider mapId={mapId} center={undefined} zoom={undefined}>
-            <MapContainer
-              ref={mapRef}
-              id={mapId}
-              className="[&>div]:rounded-md w-1/2 h-96"
-            >
+            <MapContainer id={mapId} className="[&>div]:rounded-md w-1/2 h-96">
               <TileLayer source={openStreetMap} zIndex={0} />
             </MapContainer>
 
@@ -98,11 +101,16 @@ function DrawSinglePolygon() {
                     <DrawSinglePolygonWrapper
                       value={field.value}
                       onChange={field.onChange}
-                      mapRef={mapRef}
-                      polygonStyle={polygonStyle}
-                      zIndex={1}
-                      drawStyle={drawPolygonStyleFunction}
                       // disabled
+                      polygonOptions={{
+                        zIndex: 1,
+                        style: polygonStyle,
+                      }}
+                      drawOptions={{
+                        style: drawStyleFunction,
+                      }}
+                      isActive={isActive}
+                      handleActiveChange={handleActiveChange}
                     >
                       <DrawSinglePolygonButton placeholder="Desenhar Polígono" />
                       <DrawSinglePolygonReset />

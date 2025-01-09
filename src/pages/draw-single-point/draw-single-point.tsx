@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -30,8 +30,6 @@ const formSchema = z.object({
 const mapId = "draw-single-point";
 
 function DrawSinglePoint() {
-  const mapRef = useRef(null);
-
   const [isActive, setIsActive] = useState(false);
 
   const handleActiveChange = (isActive: boolean) => {
@@ -73,21 +71,20 @@ function DrawSinglePoint() {
       <Card className="flex-1 grid p-6">
         <div className="flex flex-col gap-4 place-items-center">
           <MapProvider mapId={mapId} center={undefined} zoom={undefined}>
-            <MapContainer
-              ref={mapRef}
-              id={mapId}
-              className="[&>div]:rounded-md w-1/2 h-96"
-            >
+            <MapContainer id={mapId} className="[&>div]:rounded-md w-1/2 h-96">
               <TileLayer source={openStreetMap} zIndex={0} />
               <DrawSinglePointWrapper
                 className="absolute inset-4 z-10 h-min w-min"
                 value={undefined}
                 onChange={() => {}}
-                mapRef={mapRef}
-                pointStyle={pointStyle}
-                zIndex={1}
-                drawStyle={drawStyle}
                 disabled={isActive}
+                pointOptions={{
+                  zIndex: 1,
+                  style: pointStyle,
+                }}
+                drawOptions={{
+                  style: drawStyle,
+                }}
               >
                 <DrawSinglePointButton className="w-8 h-8 p-2 rounded-full" />
                 <DrawSinglePointReset />
@@ -107,13 +104,16 @@ function DrawSinglePoint() {
                     <DrawSinglePointWrapper
                       value={field.value}
                       onChange={field.onChange}
-                      mapRef={mapRef}
-                      pointStyle={pointStyle}
-                      zIndex={1}
-                      drawStyle={drawStyle}
+                      // disabled
+                      pointOptions={{
+                        zIndex: 1,
+                        style: pointStyle,
+                      }}
+                      drawOptions={{
+                        style: drawStyle,
+                      }}
                       isActive={isActive}
                       handleActiveChange={handleActiveChange}
-                      // disabled
                     >
                       <DrawSinglePointButton placeholder="Desenhar Ponto" />
                       <DrawSinglePointReset />

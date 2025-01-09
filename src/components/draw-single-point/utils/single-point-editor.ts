@@ -13,7 +13,8 @@ import { Feature as OlFeature } from "ol";
 
 import {
   DrawSinglePointValue,
-  DrawSinglePointStyle,
+  PointOptions,
+  DrawOptions,
 } from "../draw-single-point";
 
 class SinglePointEditor {
@@ -25,26 +26,25 @@ class SinglePointEditor {
 
   constructor(
     private map: OlMap,
-    private zIndex: number,
-    private pointStyle?: DrawSinglePointStyle,
-    private drawStyle?: DrawSinglePointStyle
+    private pointOptions: PointOptions,
+    private drawOptions?: DrawOptions
   ) {
     this.map = map;
 
     this.vectorSource = new OlVectorSource({ wrapX: false });
     this.vectorLayer = new OlVectorLayer({
       source: this.vectorSource,
-      zIndex: this.zIndex,
-      style: this.pointStyle,
+      zIndex: this.pointOptions.zIndex,
+      style: this.pointOptions.style,
     });
 
     this.modify = new OlModify({
       source: this.vectorSource,
-      style: this.drawStyle,
+      style: this.drawOptions?.style,
     });
     this.draw = new OlDraw({
       source: this.vectorSource,
-      style: this.drawStyle,
+      style: this.drawOptions?.style,
       type: "Point",
     });
     this.snap = new OlSnap({ source: this.vectorSource });

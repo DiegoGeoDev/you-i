@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useMap } from "@/components/map";
 
 import { SinglePointEditor } from "../utils";
-import { DrawSinglePointStyle } from "../draw-single-point";
+import { PointOptions, DrawOptions, ToastOptions } from "../draw-single-point";
 
 import { useComponentContext } from "./use-component-context";
 
@@ -14,13 +14,9 @@ const toastId = self.crypto.randomUUID();
 
 type DrawSinglePointProviderProps = {
   children: React.ReactNode;
-  mapRef: React.MutableRefObject<null>;
-  pointStyle?: DrawSinglePointStyle;
-  zIndex: number;
-  drawStyle?: DrawSinglePointStyle;
-  toastTitle?: string;
-  toastDescription?: string;
-  toastButtonText?: string;
+  pointOptions: PointOptions;
+  drawOptions?: DrawOptions;
+  toastOptions?: ToastOptions;
   isActive?: boolean;
   handleActiveChange?: (isActive: boolean) => void;
 };
@@ -42,13 +38,9 @@ const DrawSinglePointProviderContext =
 
 function DrawSinglePointProvider({
   children,
-  mapRef,
-  pointStyle,
-  zIndex,
-  drawStyle,
-  toastTitle,
-  toastDescription,
-  toastButtonText,
+  pointOptions,
+  drawOptions,
+  toastOptions,
   isActive,
   handleActiveChange,
   ...props
@@ -60,32 +52,11 @@ function DrawSinglePointProvider({
 
   const isModify = value !== undefined;
 
-  // abort drawing on click outside mapRef
-  // useEffect(() => {
-  //   const handleClickOutside = (event: any) => {
-  //     // @ts-ignore
-  //     if (map && mapRef.current && !mapRef.current.contains(event.target)) {
-  //       onAbortDrawing();
-  //     }
-  //   };
-
-  //   document.addEventListener("mousedown", handleClickOutside);
-
-  //   return () => {
-  //     document.removeEventListener("mousedown", handleClickOutside);
-  //   };
-  // }, [map, mapRef]);
-
   // set vectorSourceRef\vectorLayerRef
   useEffect(() => {
     if (!map) return;
 
-    editorRef.current = new SinglePointEditor(
-      map,
-      zIndex,
-      pointStyle,
-      drawStyle
-    );
+    editorRef.current = new SinglePointEditor(map, pointOptions, drawOptions);
     editorRef.current.addVectorLayer();
 
     if (value !== undefined) {
@@ -113,14 +84,15 @@ function DrawSinglePointProvider({
       handleActiveChange(true);
     }
 
-    sonnerToast(toastTitle || "Single Point", {
+    sonnerToast(toastOptions?.title || "Single Point", {
       id: toastId,
       description:
-        toastDescription || 'Click on the map to proceed or "Stop Editing"',
+        toastOptions?.description ||
+        'Click on the map to proceed or "Stop Editing"',
       duration: Infinity,
       cancel: (
         <Button className="ml-2" variant="outline" onClick={onAbortDrawing}>
-          {toastButtonText || "Stop Editing"}
+          {toastOptions?.buttonText || "Stop Editing"}
         </Button>
       ),
     });

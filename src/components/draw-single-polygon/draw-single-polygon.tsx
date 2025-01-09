@@ -15,19 +15,29 @@ import {
 } from "./hooks";
 
 type DrawSinglePolygonValue = OlCoordinate[][];
-type DrawSinglePolygonStyle = OlStyle | OlStyle[] | OlStyleFunction;
+type PolygonStyle = OlStyle | OlStyle[] | OlStyleFunction;
+type PolygonOptions = {
+  zIndex: number;
+  style?: PolygonStyle;
+};
+type DrawOptions = {
+  style?: PolygonStyle;
+};
+type ToastOptions = {
+  title?: string;
+  description?: string;
+  buttonText?: string;
+};
 
 type DrawSinglePolygonWrapperProps = React.HTMLAttributes<HTMLDivElement> & {
   value: DrawSinglePolygonValue | undefined;
   onChange: (value: DrawSinglePolygonValue | undefined) => void;
   disabled?: boolean;
-  mapRef: React.MutableRefObject<null>;
-  polygonStyle?: DrawSinglePolygonStyle;
-  zIndex: number;
-  drawStyle?: DrawSinglePolygonStyle;
-  toastTitle?: string;
-  toastDescription?: string;
-  toastButtonText?: string;
+  polygonOptions: PolygonOptions;
+  drawOptions?: DrawOptions;
+  toastOptions?: ToastOptions;
+  isActive?: boolean;
+  handleActiveChange?: (isActive: boolean) => void;
 };
 
 const DrawSinglePolygonWrapper = React.forwardRef<
@@ -39,13 +49,11 @@ const DrawSinglePolygonWrapper = React.forwardRef<
       value,
       onChange,
       disabled = false,
-      mapRef,
-      polygonStyle,
-      zIndex,
-      drawStyle,
-      toastTitle,
-      toastDescription,
-      toastButtonText,
+      polygonOptions,
+      drawOptions,
+      toastOptions,
+      isActive,
+      handleActiveChange,
       children,
       className,
       ...props
@@ -65,13 +73,11 @@ const DrawSinglePolygonWrapper = React.forwardRef<
         value={{ value: innerValue, onChange: _onChange, disabled }}
       >
         <DrawSinglePolygonProvider
-          mapRef={mapRef}
-          polygonStyle={polygonStyle}
-          zIndex={zIndex}
-          drawStyle={drawStyle}
-          toastTitle={toastTitle}
-          toastDescription={toastDescription}
-          toastButtonText={toastButtonText}
+          polygonOptions={polygonOptions}
+          drawOptions={drawOptions}
+          toastOptions={toastOptions}
+          isActive={isActive}
+          handleActiveChange={handleActiveChange}
         >
           <div ref={ref} className={cn("flex gap-4", className)} {...props}>
             {children}
@@ -94,6 +100,8 @@ const DrawSinglePolygon = React.forwardRef<
   const { disabled } = useComponentContext();
   const { isActive, handleDrawSinglePolygon } = useDrawSinglePolygon();
 
+  const isDisabled = disabled || isActive;
+
   return (
     <Button
       ref={ref}
@@ -102,7 +110,7 @@ const DrawSinglePolygon = React.forwardRef<
       data-has-placeholder={placeholder !== undefined}
       className={cn("w-full", className)}
       onClick={handleDrawSinglePolygon}
-      disabled={disabled || isActive}
+      disabled={isDisabled}
       {...props}
     >
       <Pentagon className="data-[has-placeholder=true]:mr-2" size="16" />
@@ -139,5 +147,10 @@ const DrawSinglePolygonReset = React.forwardRef<
 });
 DrawSinglePolygonReset.displayName = "DrawSinglePolygonReset";
 
-export { type DrawSinglePolygonValue, type DrawSinglePolygonStyle };
+export {
+  type DrawSinglePolygonValue,
+  type PolygonOptions,
+  type DrawOptions,
+  type ToastOptions,
+};
 export { DrawSinglePolygonWrapper, DrawSinglePolygon, DrawSinglePolygonReset };

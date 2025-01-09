@@ -15,19 +15,27 @@ import {
 } from "./hooks";
 
 type DrawSinglePointValue = OlCoordinate;
-type DrawSinglePointStyle = OlStyle | OlStyle[] | OlStyleFunction;
+type PointStyle = OlStyle | OlStyle[] | OlStyleFunction;
+type PointOptions = {
+  zIndex: number;
+  style?: PointStyle;
+};
+type DrawOptions = {
+  style?: PointStyle;
+};
+type ToastOptions = {
+  title?: string;
+  description?: string;
+  buttonText?: string;
+};
 
 type DrawSinglePointWrapperProps = React.HTMLAttributes<HTMLDivElement> & {
   value: DrawSinglePointValue | undefined;
   onChange: (value: DrawSinglePointValue | undefined) => void;
   disabled?: boolean;
-  mapRef: React.MutableRefObject<null>;
-  pointStyle?: DrawSinglePointStyle;
-  zIndex: number;
-  drawStyle?: DrawSinglePointStyle;
-  toastTitle?: string;
-  toastDescription?: string;
-  toastButtonText?: string;
+  pointOptions: PointOptions;
+  drawOptions?: DrawOptions;
+  toastOptions?: ToastOptions;
   isActive?: boolean;
   handleActiveChange?: (isActive: boolean) => void;
 };
@@ -41,13 +49,9 @@ const DrawSinglePointWrapper = React.forwardRef<
       value,
       onChange,
       disabled = false,
-      mapRef,
-      pointStyle,
-      zIndex,
-      drawStyle,
-      toastTitle,
-      toastDescription,
-      toastButtonText,
+      pointOptions,
+      drawOptions,
+      toastOptions,
       isActive,
       handleActiveChange,
       children,
@@ -69,13 +73,9 @@ const DrawSinglePointWrapper = React.forwardRef<
         value={{ value: innerValue, onChange: _onChange, disabled }}
       >
         <DrawSinglePointProvider
-          mapRef={mapRef}
-          pointStyle={pointStyle}
-          zIndex={zIndex}
-          drawStyle={drawStyle}
-          toastTitle={toastTitle}
-          toastDescription={toastDescription}
-          toastButtonText={toastButtonText}
+          pointOptions={pointOptions}
+          drawOptions={drawOptions}
+          toastOptions={toastOptions}
           isActive={isActive}
           handleActiveChange={handleActiveChange}
         >
@@ -100,6 +100,8 @@ const DrawSinglePoint = React.forwardRef<
   const { disabled } = useComponentContext();
   const { isActive, handleDrawSinglePoint } = useDrawSinglePoint();
 
+  const isDisabled = disabled || isActive;
+
   return (
     <Button
       ref={ref}
@@ -108,7 +110,7 @@ const DrawSinglePoint = React.forwardRef<
       data-has-placeholder={placeholder !== undefined}
       className={cn("w-full", className)}
       onClick={handleDrawSinglePoint}
-      disabled={disabled || isActive}
+      disabled={isDisabled}
       {...props}
     >
       <MapPin className="data-[has-placeholder=true]:mr-2" size="16" />
@@ -145,5 +147,10 @@ const DrawSinglePointReset = React.forwardRef<
 });
 DrawSinglePointReset.displayName = "DrawSinglePointReset";
 
-export { type DrawSinglePointValue, type DrawSinglePointStyle };
+export {
+  type DrawSinglePointValue,
+  type PointOptions,
+  type DrawOptions,
+  type ToastOptions,
+};
 export { DrawSinglePointWrapper, DrawSinglePoint, DrawSinglePointReset };

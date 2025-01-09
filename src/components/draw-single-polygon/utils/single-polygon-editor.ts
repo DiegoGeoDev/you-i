@@ -13,7 +13,8 @@ import { Feature as OlFeature } from "ol";
 
 import {
   DrawSinglePolygonValue,
-  DrawSinglePolygonStyle,
+  PolygonOptions,
+  DrawOptions,
 } from "../draw-single-polygon";
 
 class SinglePolygonEditor {
@@ -25,26 +26,25 @@ class SinglePolygonEditor {
 
   constructor(
     private map: OlMap,
-    private zIndex: number,
-    private polygonStyle?: DrawSinglePolygonStyle,
-    private drawStyle?: DrawSinglePolygonStyle
+    private polygonOptions: PolygonOptions,
+    private drawOptions?: DrawOptions
   ) {
     this.map = map;
 
     this.vectorSource = new OlVectorSource({ wrapX: false });
     this.vectorLayer = new OlVectorLayer({
       source: this.vectorSource,
-      zIndex: this.zIndex,
-      style: this.polygonStyle,
+      zIndex: this.polygonOptions.zIndex,
+      style: this.polygonOptions.style,
     });
 
     this.modify = new OlModify({
       source: this.vectorSource,
-      style: this.drawStyle,
+      style: this.drawOptions?.style,
     });
     this.draw = new OlDraw({
       source: this.vectorSource,
-      style: this.drawStyle,
+      style: this.drawOptions?.style,
       type: "Polygon",
     });
     this.snap = new OlSnap({ source: this.vectorSource });
@@ -118,6 +118,7 @@ class SinglePolygonEditor {
     const feature = new OlFeature({
       geometry: polygon_3857,
     });
+
     this.vectorSource.addFeature(feature);
   }
 }

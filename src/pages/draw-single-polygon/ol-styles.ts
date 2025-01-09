@@ -93,7 +93,7 @@ const lastSegmentStyle = new OlStyle({
 });
 
 // Style function to apply different styles based on the feature state
-const drawPolygonStyleFunction = (feature: any) => {
+const drawStyleFunction = (feature: any) => {
   const styles = [polygonSegmentsStyle];
   const geometry = feature.getGeometry();
 
@@ -112,4 +112,4 @@ const drawPolygonStyleFunction = (feature: any) => {
   return styles;
 };
 
-export { polygonStyle, drawStyle, drawPolygonStyleFunction };
+export { polygonStyle, drawStyle, drawStyleFunction };

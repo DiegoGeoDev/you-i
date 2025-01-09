@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useRef } from "react";
 import { toast as sonnerToast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -6,7 +6,11 @@ import { Button } from "@/components/ui/button";
 import { useMap } from "@/components/map";
 
 import { SinglePolygonEditor } from "../utils";
-import { DrawSinglePolygonStyle } from "../draw-single-polygon";
+import {
+  PolygonOptions,
+  DrawOptions,
+  ToastOptions,
+} from "../draw-single-polygon";
 
 import { useComponentContext } from "./use-component-context";
 
@@ -14,17 +18,15 @@ const toastId = self.crypto.randomUUID();
 
 type DrawSinglePolygonProviderProps = {
   children: React.ReactNode;
-  mapRef: React.MutableRefObject<null>;
-  polygonStyle?: DrawSinglePolygonStyle;
-  zIndex: number;
-  drawStyle?: DrawSinglePolygonStyle;
-  toastTitle?: string;
-  toastDescription?: string;
-  toastButtonText?: string;
+  polygonOptions: PolygonOptions;
+  drawOptions?: DrawOptions;
+  toastOptions?: ToastOptions;
+  isActive?: boolean;
+  handleActiveChange?: (isActive: boolean) => void;
 };
 
 type DrawSinglePolygonProviderState = {
-  isActive: boolean;
+  isActive?: boolean;
   handleDrawSinglePolygon: () => void;
   handleClearSinglePolygon: () => void;
 };
@@ -40,13 +42,11 @@ const DrawSinglePolygonProviderContext =
 
 function DrawSinglePolygonProvider({
   children,
-  mapRef,
-  polygonStyle,
-  zIndex,
-  drawStyle,
-  toastTitle,
-  toastDescription,
-  toastButtonText,
+  polygonOptions,
+  drawOptions,
+  toastOptions,
+  isActive,
+  handleActiveChange,
   ...props
 }: DrawSinglePolygonProviderProps) {
   const { map } = useMap();
@@ -54,25 +54,7 @@ function DrawSinglePolygonProvider({
 
   const editorRef = useRef<SinglePolygonEditor>();
 
-  const [isActive, setIsActive] = useState(false);
-
   const isModify = value !== undefined;
-
-  // abort drawing on click outside mapRef
-  // useEffect(() => {
-  //   const handleClickOutside = (event: any) => {
-  //     // @ts-ignore
-  //     if (map && mapRef.current && !mapRef.current.contains(event.target)) {
-  //       onAbortDrawing();
-  //     }
-  //   };
-
-  //   document.addEventListener("mousedown", handleClickOutside);
-
-  //   return () => {
-  //     document.removeEventListener("mousedown", handleClickOutside);
-  //   };
-  // }, [map, mapRef]);
 
   // set vectorSourceRef\vectorLayerRef
   useEffect(() => {
@@ -80,9 +62,8 @@ function DrawSinglePolygonProvider({
 
     editorRef.current = new SinglePolygonEditor(
       map,
-      zIndex,
-      polygonStyle,
-      drawStyle
+      polygonOptions,
+      drawOptions
     );
     editorRef.current.addVectorLayer();
 
@@ -98,23 +79,28 @@ function DrawSinglePolygonProvider({
   function onAbortDrawing() {
     editorRef.current?.abortDrawing();
 
-    setIsActive(false);
+    if (handleActiveChange) {
+      handleActiveChange(false);
+    }
     sonnerToast.dismiss(toastId);
   }
 
   function handleDrawSinglePolygon() {
     editorRef.current?.enableDrawing(isModify, onChange, onAbortDrawing);
 
-    setIsActive(true);
+    if (handleActiveChange) {
+      handleActiveChange(true);
+    }
 
-    sonnerToast(toastTitle || "Single Polygon", {
+    sonnerToast(toastOptions?.title || "Single Polygon", {
       id: toastId,
       description:
-        toastDescription || 'Click on the map to proceed or "Stop Editing"',
+        toastOptions?.description ||
+        'Click on the map to proceed or "Stop Editing"',
       duration: Infinity,
       cancel: (
         <Button className="ml-2" variant="outline" onClick={onAbortDrawing}>
-          {toastButtonText || "Stop Editing"}
+          {toastOptions?.buttonText || "Stop Editing"}
         </Button>
       ),
     });
