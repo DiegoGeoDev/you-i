@@ -4,14 +4,17 @@ import { Vector as OlVectorSource } from "ol/source";
 import { Point as OlPoint } from "ol/geom";
 import OlFeature from "ol/Feature";
 import { Coordinate as OlCoordinate } from "ol/coordinate";
-import OlStyle from "ol/style/Style";
+import OlStyle, { StyleFunction as OlStyleFunction } from "ol/style/Style";
 import { transform } from "ol/proj";
 
 class PlacePickerPoint {
   private vectorSource: OlVectorSource;
   private vectorLayer: OlVectorLayer<OlVectorSource>;
 
-  constructor(private map: OlMap, private pointStyle?: OlStyle) {
+  constructor(
+    private map: OlMap,
+    private pointStyle: OlStyle | OlStyle[] | OlStyleFunction | undefined
+  ) {
     this.map = map;
     this.vectorSource = new OlVectorSource({ wrapX: false });
     this.vectorLayer = new OlVectorLayer({

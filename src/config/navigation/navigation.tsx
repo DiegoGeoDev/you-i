@@ -7,6 +7,7 @@ import {
   PlacePicker,
   DrawSinglePoint,
   DrawSinglePolygon,
+  InputNumber,
 } from "@/pages";
 
 const iconSize = 20;
@@ -103,6 +104,19 @@ const navigationConfig: NavigationConfig[] = [
         page: <DrawSinglePolygon />,
         isNavigationItem: false,
         pathTest: /^\/draw\-single\-polygon$/,
+      },
+    ],
+  },
+  {
+    id: self.crypto.randomUUID(),
+    data: [
+      {
+        id: self.crypto.randomUUID(),
+        path: "/input-number",
+        title: "Input Number",
+        page: <InputNumber />,
+        isNavigationItem: false,
+        pathTest: /^\/input\-number$/,
       },
     ],
   },

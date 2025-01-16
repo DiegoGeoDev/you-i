@@ -2,6 +2,7 @@ export * from "./context-providers";
 export * from "./draw-single-point";
 export * from "./draw-single-polygon";
 export * from "./header";
+export * from "./input-number";
 export * from "./list-component";
 export * from "./navigation";
 export * from "./one-to-one-relationship";

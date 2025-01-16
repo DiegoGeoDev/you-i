@@ -30,6 +30,11 @@ const componentsConfig: ComponentsConfig[] = [
     to: "/draw-single-polygon",
     title: "Draw Single Polygon",
   },
+  {
+    id: self.crypto.randomUUID(),
+    to: "/input-number",
+    title: "Input Number",
+  },
 ];
 
 export { componentsConfig, type ComponentsConfig };

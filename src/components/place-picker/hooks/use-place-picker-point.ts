@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import OlStyle from "ol/style/Style";
+import OlStyle, { StyleFunction as OlStyleFunction } from "ol/style/Style";
 import { Coordinate as OlCoordinate } from "ol/coordinate";
 
 import { useMap } from "@/components/map";
@@ -8,7 +8,7 @@ import { useComponentContext } from "./use-component-context";
 import { PlacePickerPoint } from "../utils";
 
 type usePlacePickerPointType = {
-  pointStyle?: OlStyle;
+  pointStyle: OlStyle | OlStyle[] | OlStyleFunction | undefined;
 };
 
 function usePlacePickerPoint({ pointStyle }: usePlacePickerPointType) {

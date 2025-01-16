@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { MapPin, X } from "lucide-react";
-import OlStyle from "ol/style/Style";
+import OlStyle, { StyleFunction as OlStyleFunction } from "ol/style/Style";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -118,7 +118,7 @@ const PlacePickerContent = React.forwardRef<
 PlacePickerContent.displayName = "PlacePickerContent";
 
 type PlacePickerMapProps = {
-  pointStyle?: OlStyle;
+  pointStyle: OlStyle | OlStyle[] | OlStyleFunction | undefined;
 } & React.ComponentPropsWithoutRef<typeof MapContainer>;
 
 const PlacePickerMap = React.forwardRef<
@@ -146,7 +146,7 @@ const PlacePickerMap = React.forwardRef<
 PlacePickerMap.displayName = "PlacePickerMap";
 
 type PlacePickerPointProps = {
-  pointStyle?: OlStyle;
+  pointStyle: OlStyle | OlStyle[] | OlStyleFunction | undefined;
 };
 
 const PlacePickerPoint = ({ pointStyle }: PlacePickerPointProps) => {
