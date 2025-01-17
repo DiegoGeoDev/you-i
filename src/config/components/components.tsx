@@ -35,6 +35,11 @@ const componentsConfig: ComponentsConfig[] = [
     to: "/input-number",
     title: "Input Number",
   },
+  {
+    id: self.crypto.randomUUID(),
+    to: "/combobox",
+    title: "Combobox",
+  },
 ];
 
 export { componentsConfig, type ComponentsConfig };

@@ -8,6 +8,7 @@ import {
   DrawSinglePoint,
   DrawSinglePolygon,
   InputNumber,
+  Combobox,
 } from "@/pages";
 
 const iconSize = 20;
@@ -117,6 +118,19 @@ const navigationConfig: NavigationConfig[] = [
         page: <InputNumber />,
         isNavigationItem: false,
         pathTest: /^\/input\-number$/,
+      },
+    ],
+  },
+  {
+    id: self.crypto.randomUUID(),
+    data: [
+      {
+        id: self.crypto.randomUUID(),
+        path: "/combobox",
+        title: "Combobox",
+        page: <Combobox />,
+        isNavigationItem: false,
+        pathTest: /^\/combobox$/,
       },
     ],
   },
