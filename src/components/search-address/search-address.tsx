@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { ChevronsUpDown } from "lucide-react";
 import { CommandLoading } from "cmdk";
 
-import { Button } from "../button";
+import { Button } from "@/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -10,141 +10,93 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "../command";
-import { Popover, PopoverContent, PopoverTrigger } from "../popover";
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
+import { cn } from "@/lib/utils";
 
 import { useSearchAddress } from "./hooks";
 
-import { cn } from "../../utils";
+import { ComponentContext, useComponentContext } from "./hooks";
 
-type SearchAddressResult = {
-  address?: {
-    city?: string;
-    city_district?: string;
-    country?: string;
-    country_code?: string;
-    county?: string;
-    municipality?: string;
-    postcode?: string;
-    road?: string;
-    state?: string;
-  };
-  display_name: string;
-  type?: string;
-  x: number;
-  y: number;
-};
+type SearchAddressItem = Record<"value" | "label", string>;
 
-type SearchAddressProps = {
-  value: SearchAddressResult | undefined;
-  setValue: (value: SearchAddressResult | undefined) => void;
-  triggerPlaceholder?: string;
-  searchPlaceholder?: string;
-  emptyPlaceholder?: string;
-  triggerClassName?: string;
-  popoverContentClassName?: string;
+type SearchAddressValue = string;
+
+type SearchAddressWrapperProps = React.HTMLAttributes<HTMLButtonElement> & {
+  value: SearchAddressValue | undefined;
+  onChange: (value: SearchAddressValue | undefined) => void;
   disabled?: boolean;
+  placeholder?: string;
+  items: SearchAddressItem[];
 };
 
-const SearchAddress: React.FC<SearchAddressProps> = ({
-  value,
-  setValue,
-  triggerPlaceholder = "Pesquisar Lugar",
-  searchPlaceholder = "Pesquise por um lugar",
-  emptyPlaceholder = "Nenhum lugar encontrado",
-  triggerClassName,
-  popoverContentClassName,
-  disabled = false,
-}) => {
-  const [open, setOpen] = React.useState(false);
-  const [location, setLocation] = React.useState(() => {
-    if (value === undefined) return "";
+const SearchAddressWrapper = React.forwardRef<
+  React.ElementRef<typeof Button>,
+  SearchAddressWrapperProps
+>(
+  (
+    {
+      value,
+      onChange,
+      disabled = false,
+      placeholder = "Choose an option",
+      items,
+      className,
+      children,
+      ...props
+    },
+    ref
+  ) => {
+    const [open, setOpen] = useState(false);
 
-    if (value.display_name === undefined) return `${value.x}, ${value.y}`;
+    // innerValue to work with defaultValues (react-hook-form)
+    const [innerValue, setInnerValue] = useState(value);
 
-    return value.display_name;
-  });
+    function _onChange(value: SearchAddressValue | undefined) {
+      onChange(value);
+      setInnerValue(value);
+    }
 
-  const { results, loading, handleSearch, selectedItem, setSelectedItem } =
-    useSearchAddress();
-
-  React.useEffect(() => {
-    setValue(
-      selectedItem !== null
-        ? {
-            address: selectedItem.address,
-            display_name: selectedItem.display_name,
-            type: selectedItem.type,
-            x: selectedItem.x,
-            y: selectedItem.y,
-          }
-        : undefined,
+    return (
+      <ComponentContext.Provider
+        value={{ value: innerValue, onChange: _onChange, items }}
+      >
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              ref={ref}
+              type="button"
+              variant="outline"
+              disabled={disabled}
+              aria-expanded={open}
+              data-is-undefined={innerValue === undefined}
+              className={cn(
+                `
+                w-full justify-between font-normal 
+                data-[is-undefined=true]:text-muted-foreground
+                `,
+                className
+              )}
+              {...props}
+            >
+              {innerValue
+                ? items.find((item) => item.value === innerValue)?.label
+                : placeholder}
+              <ChevronsUpDown className="ml-2" size="16" />
+            </Button>
+          </PopoverTrigger>
+          {children}
+        </Popover>
+      </ComponentContext.Provider>
     );
-  }, [selectedItem]);
+  }
+);
+SearchAddressWrapper.displayName = "SearchAddressWrapper";
 
-  return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          disabled={disabled}
-          className={cn("w-80 justify-between truncate", triggerClassName)}
-        >
-          <p className="truncate">
-            {selectedItem ? selectedItem.display_name : triggerPlaceholder}
-          </p>
-
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className={cn("w-80 p-0", popoverContentClassName)}>
-        <Command>
-          <CommandInput
-            placeholder={searchPlaceholder}
-            onValueChange={(value) => handleSearch(value)}
-            className="w-full"
-          />
-          <CommandList>
-            {loading ? (
-              <CommandLoading>
-                <CommandEmpty>Digite para pesquisar</CommandEmpty>
-              </CommandLoading>
-            ) : Object.keys(results).length > 0 ? (
-              Object.entries(results).map(([type, items]) => (
-                <CommandGroup
-                  key={type}
-                  heading={type.charAt(0).toUpperCase() + type.slice(1)}
-                >
-                  {items.map((item, index) => (
-                    <CommandItem
-                      key={index}
-                      value={item.display_name}
-                      onSelect={(currentValue: string) => {
-                        const item = results[type]?.find(
-                          (item) => item.display_name === currentValue,
-                        );
-                        setLocation(
-                          currentValue === location ? "" : currentValue,
-                        );
-                        setSelectedItem(item ?? null);
-                        setOpen(false);
-                      }}
-                    >
-                      {item.display_name}
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              ))
-            ) : (
-              <CommandEmpty>{emptyPlaceholder}</CommandEmpty>
-            )}
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
-  );
-};
-
-export { type SearchAddressResult, SearchAddress };
+export { type SearchAddressValue, type SearchAddressItem };
+export { SearchAddressWrapper };

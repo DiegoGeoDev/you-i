@@ -20,7 +20,7 @@ function HomeItem({ to, title }: HomeItemProps) {
 function Home() {
   return (
     <section className="flex-1 flex px-6 pb-6">
-      <Card className="flex-1 grid grid-cols-5 gap-4 p-6">
+      <Card className="flex-1 flex gap-4 p-6">
         {componentsConfig.map(({ id, to, title }) => (
           <HomeItem key={id} to={to} title={title} />
         ))}
