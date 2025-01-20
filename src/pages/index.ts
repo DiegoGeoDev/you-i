@@ -6,4 +6,5 @@ export * from "./input-number";
 export * from "./not-found";
 export * from "./one-to-one-relationship";
 export * from "./place-picker";
+export * from "./search-address";
 export * from "./time-picker";

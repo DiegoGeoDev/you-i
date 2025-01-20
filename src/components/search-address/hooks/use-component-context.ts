@@ -1,11 +1,10 @@
 import { createContext, useContext } from "react";
 
-import { SearchAddressValue, SearchAddressItem } from "../search-address";
+import { SearchAddressValue } from "../search-address";
 
 type ComponentContextType = {
   value: SearchAddressValue | undefined;
   onChange: (value: SearchAddressValue | undefined) => void;
-  items: SearchAddressItem[];
 };
 
 const ComponentContext = createContext<ComponentContextType | undefined>(

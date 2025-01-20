@@ -40,6 +40,11 @@ const componentsConfig: ComponentsConfig[] = [
     to: "/combobox",
     title: "Combobox",
   },
+  {
+    id: self.crypto.randomUUID(),
+    to: "/search-address",
+    title: "Search Address",
+  },
 ];
 
 export { componentsConfig, type ComponentsConfig };

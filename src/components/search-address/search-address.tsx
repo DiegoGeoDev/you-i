@@ -23,16 +23,35 @@ import { useSearchAddress } from "./hooks";
 
 import { ComponentContext, useComponentContext } from "./hooks";
 
-type SearchAddressItem = Record<"value" | "label", string>;
+type SearchOptions = {
+  headers?: {
+    "Accept-Language": string;
+  };
+};
 
-type SearchAddressValue = string;
+type SearchAddressValue = {
+  address?: {
+    city?: string;
+    city_district?: string;
+    country?: string;
+    country_code?: string;
+    county?: string;
+    municipality?: string;
+    postcode?: string;
+    road?: string;
+    state?: string;
+  };
+  display_name: string;
+  type?: string;
+  x: number;
+  y: number;
+};
 
 type SearchAddressWrapperProps = React.HTMLAttributes<HTMLButtonElement> & {
   value: SearchAddressValue | undefined;
   onChange: (value: SearchAddressValue | undefined) => void;
   disabled?: boolean;
   placeholder?: string;
-  items: SearchAddressItem[];
 };
 
 const SearchAddressWrapper = React.forwardRef<
@@ -44,8 +63,7 @@ const SearchAddressWrapper = React.forwardRef<
       value,
       onChange,
       disabled = false,
-      placeholder = "Choose an option",
-      items,
+      placeholder = "Search for an address",
       className,
       children,
       ...props
@@ -64,7 +82,7 @@ const SearchAddressWrapper = React.forwardRef<
 
     return (
       <ComponentContext.Provider
-        value={{ value: innerValue, onChange: _onChange, items }}
+        value={{ value: innerValue, onChange: _onChange }}
       >
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
@@ -77,16 +95,16 @@ const SearchAddressWrapper = React.forwardRef<
               data-is-undefined={innerValue === undefined}
               className={cn(
                 `
-                w-full justify-between font-normal 
+                w-full justify-between truncate font-normal 
                 data-[is-undefined=true]:text-muted-foreground
                 `,
                 className
               )}
               {...props}
             >
-              {innerValue
-                ? items.find((item) => item.value === innerValue)?.label
-                : placeholder}
+              <p className="truncate">
+                {innerValue ? innerValue.display_name : placeholder}
+              </p>
               <ChevronsUpDown className="ml-2" size="16" />
             </Button>
           </PopoverTrigger>
@@ -98,5 +116,98 @@ const SearchAddressWrapper = React.forwardRef<
 );
 SearchAddressWrapper.displayName = "SearchAddressWrapper";
 
-export { type SearchAddressValue, type SearchAddressItem };
-export { SearchAddressWrapper };
+type SearchAddressContentProps = React.ComponentPropsWithoutRef<
+  typeof PopoverContent
+>;
+
+const SearchAddressContent = React.forwardRef<
+  React.ElementRef<typeof PopoverContent>,
+  SearchAddressContentProps
+>(({ className, children, ...props }, ref) => {
+  return (
+    <PopoverContent
+      ref={ref}
+      className={cn("w-[300px] p-0", className)}
+      forceMount={true}
+      {...props}
+    >
+      {children}
+    </PopoverContent>
+  );
+});
+SearchAddressContent.displayName = "SearchAddressContent";
+
+type SearchAddressCommandProps = React.ComponentPropsWithoutRef<
+  typeof Command
+> & {
+  placeholder?: string;
+  emptyText?: string;
+  searchOptions?: SearchOptions;
+};
+
+const SearchAddressCommand = React.forwardRef<
+  React.ElementRef<typeof Command>,
+  SearchAddressCommandProps
+>(
+  (
+    {
+      placeholder = "Type to search",
+      emptyText = "No results found",
+      searchOptions,
+      className,
+      children,
+      ...props
+    },
+    ref
+  ) => {
+    const { onChange } = useComponentContext();
+    const { results, loading, handleSearch } = useSearchAddress({
+      searchOptions,
+    });
+
+    return (
+      <Command ref={ref} {...props}>
+        <CommandInput
+          placeholder={placeholder}
+          onValueChange={(value) => handleSearch(value)}
+          className={cn("w-full", className)}
+        />
+        <CommandList>
+          {loading ? (
+            <CommandLoading>
+              <CommandEmpty>Digite para pesquisar</CommandEmpty>
+            </CommandLoading>
+          ) : Object.keys(results).length > 0 ? (
+            Object.entries(results).map(([type, items]) => (
+              <CommandGroup
+                key={type}
+                heading={type.charAt(0).toUpperCase() + type.slice(1)}
+              >
+                {items.map((item, index) => (
+                  <CommandItem
+                    key={index}
+                    value={item.display_name}
+                    onSelect={(currentValue: string) => {
+                      const item = results[type]?.find(
+                        (item) => item.display_name === currentValue
+                      );
+                      onChange(item ?? undefined);
+                    }}
+                  >
+                    {item.display_name}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            ))
+          ) : (
+            <CommandEmpty>{emptyText}</CommandEmpty>
+          )}
+        </CommandList>
+      </Command>
+    );
+  }
+);
+SearchAddressCommand.displayName = "SearchAddressCommand";
+
+export { type SearchAddressValue, type SearchOptions };
+export { SearchAddressWrapper, SearchAddressContent, SearchAddressCommand };

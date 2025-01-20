@@ -8,5 +8,6 @@ export * from "./list-component";
 export * from "./navigation";
 export * from "./one-to-one-relationship";
 export * from "./place-picker";
+export * from "./search-address";
 export * from "./theme";
 export * from "./time-picker";

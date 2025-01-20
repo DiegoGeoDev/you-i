@@ -9,6 +9,7 @@ import {
   DrawSinglePolygon,
   InputNumber,
   Combobox,
+  SearchAddress,
 } from "@/pages";
 
 const iconSize = 20;
@@ -131,6 +132,19 @@ const navigationConfig: NavigationConfig[] = [
         page: <Combobox />,
         isNavigationItem: false,
         pathTest: /^\/combobox$/,
+      },
+    ],
+  },
+  {
+    id: self.crypto.randomUUID(),
+    data: [
+      {
+        id: self.crypto.randomUUID(),
+        path: "/search-address",
+        title: "Search Address",
+        page: <SearchAddress />,
+        isNavigationItem: false,
+        pathTest: /^\/search\-address$/,
       },
     ],
   },
