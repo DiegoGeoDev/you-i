@@ -73,10 +73,12 @@ const PlacePickerWrapper = React.forwardRef<
               variant="outline"
               aria-expanded={open}
               data-is-undefined={innerValue === undefined}
+              data-is-disabled={disabled}
               className={cn(
                 `
                 w-full justify-start font-normal 
                 data-[is-undefined=true]:text-muted-foreground
+                data-[is-disabled=true]:text-muted-foreground
                 `,
                 className
               )}

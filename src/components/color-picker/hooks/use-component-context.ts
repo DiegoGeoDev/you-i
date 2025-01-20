@@ -1,0 +1,24 @@
+import { createContext, useContext } from "react";
+
+import { ColorPickerValue } from "../color-picker";
+
+type ComponentContextType = {
+  value: ColorPickerValue | undefined;
+  onChange: (value: ColorPickerValue | undefined) => void;
+};
+
+const ComponentContext = createContext<ComponentContextType | undefined>(
+  undefined
+);
+
+function useComponentContext() {
+  const context = useContext(ComponentContext);
+  if (!context) {
+    throw new Error(
+      "ColorPicker components must be used within a ColorPickerWrapper"
+    );
+  }
+  return context;
+}
+
+export { ComponentContext, useComponentContext };

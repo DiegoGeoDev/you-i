@@ -11,6 +11,7 @@ import {
   PasswordInput,
   Combobox,
   SearchAddress,
+  ColorPicker,
 } from "@/pages";
 
 const iconSize = 20;
@@ -159,6 +160,19 @@ const navigationConfig: NavigationConfig[] = [
         page: <SearchAddress />,
         isNavigationItem: false,
         pathTest: /^\/search\-address$/,
+      },
+    ],
+  },
+  {
+    id: self.crypto.randomUUID(),
+    data: [
+      {
+        id: self.crypto.randomUUID(),
+        path: "/color-picker",
+        title: "Color Picker",
+        page: <ColorPicker />,
+        isNavigationItem: false,
+        pathTest: /^\/color\-picker$/,
       },
     ],
   },

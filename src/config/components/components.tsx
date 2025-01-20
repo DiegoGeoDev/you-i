@@ -50,6 +50,11 @@ const componentsConfig: ComponentsConfig[] = [
     to: "/search-address",
     title: "Search Address",
   },
+  {
+    id: self.crypto.randomUUID(),
+    to: "/color-picker",
+    title: "Color Picker",
+  },
 ];
 
 export { componentsConfig, type ComponentsConfig };

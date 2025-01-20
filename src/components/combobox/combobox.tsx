@@ -64,12 +64,11 @@ const ComboboxWrapper = React.forwardRef<
         value={{ value: innerValue, onChange: _onChange, items }}
       >
         <Popover open={open} onOpenChange={setOpen}>
-          <PopoverTrigger asChild>
+          <PopoverTrigger asChild disabled={disabled}>
             <Button
               ref={ref}
               type="button"
               variant="outline"
-              disabled={disabled}
               aria-expanded={open}
               data-is-undefined={innerValue === undefined}
               className={cn(

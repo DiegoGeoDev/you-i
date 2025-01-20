@@ -6,33 +6,38 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 
-import { PasswordInput as PasswordInputComponent } from "@/components";
+import {
+  ColorPickerWrapper,
+  ColorPickerContent,
+  ColorPicker as ColorPickerComponent,
+  ColorPickerInput,
+} from "@/components";
 
 import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
-  password: z.string(),
+  color: z.string().optional(),
 });
 
-function PasswordInput() {
+function ColorPicker() {
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      password: "",
-      // password: "10",
+      color: undefined,
+      // place: "",
     },
   });
 
-  const passwordWatch = form.watch("password");
+  const colorWatch = form.watch("color");
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
     toast({
       title: "onSubmit",
       description:
-        values.password === undefined ? "undefined" : JSON.stringify(values),
+        values.color === undefined ? "undefined" : JSON.stringify(values),
     });
   }
 
@@ -54,16 +59,21 @@ function PasswordInput() {
             className="space-y-2"
           >
             <div className="space-y-2">
-              <Label>Password</Label>
+              <Label>Color</Label>
               <Controller
                 control={form.control}
-                name="password"
+                name="color"
                 render={({ field }) => (
-                  <PasswordInputComponent
+                  <ColorPickerWrapper
                     value={field.value}
                     onChange={field.onChange}
-                    // maxLength={3}
-                  />
+                    // disabled
+                  >
+                    <ColorPickerContent>
+                      <ColorPickerComponent />
+                      <ColorPickerInput />
+                    </ColorPickerContent>
+                  </ColorPickerWrapper>
                 )}
               />
             </div>
@@ -71,9 +81,9 @@ function PasswordInput() {
             <Button type="submit">Submit</Button>
 
             <span className="block text-muted-foreground w-80">
-              {passwordWatch === undefined
+              {colorWatch === undefined
                 ? "undefined"
-                : JSON.stringify(passwordWatch)}
+                : JSON.stringify(colorWatch)}
             </span>
           </form>
         </div>
@@ -82,4 +92,4 @@ function PasswordInput() {
   );
 }
 
-export { PasswordInput };
+export { ColorPicker };

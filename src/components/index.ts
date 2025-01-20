@@ -1,3 +1,4 @@
+export * from "./color-picker";
 export * from "./combobox";
 export * from "./context-providers";
 export * from "./draw-single-point";
