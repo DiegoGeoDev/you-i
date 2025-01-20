@@ -7,7 +7,8 @@ import {
   PlacePicker,
   DrawSinglePoint,
   DrawSinglePolygon,
-  InputNumber,
+  NumberInput,
+  PasswordInput,
   Combobox,
   SearchAddress,
 } from "@/pages";
@@ -114,11 +115,24 @@ const navigationConfig: NavigationConfig[] = [
     data: [
       {
         id: self.crypto.randomUUID(),
-        path: "/input-number",
-        title: "Input Number",
-        page: <InputNumber />,
+        path: "/number-input",
+        title: "Number Input",
+        page: <NumberInput />,
         isNavigationItem: false,
-        pathTest: /^\/input\-number$/,
+        pathTest: /^\/number\-input$/,
+      },
+    ],
+  },
+  {
+    id: self.crypto.randomUUID(),
+    data: [
+      {
+        id: self.crypto.randomUUID(),
+        path: "/password-input",
+        title: "Password Input",
+        page: <PasswordInput />,
+        isNavigationItem: false,
+        pathTest: /^\/password\-input$/,
       },
     ],
   },

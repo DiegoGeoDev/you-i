@@ -32,8 +32,13 @@ const componentsConfig: ComponentsConfig[] = [
   },
   {
     id: self.crypto.randomUUID(),
-    to: "/input-number",
-    title: "Input Number",
+    to: "/number-input",
+    title: "Number Input",
+  },
+  {
+    id: self.crypto.randomUUID(),
+    to: "/password-input",
+    title: "Password Input",
   },
   {
     id: self.crypto.randomUUID(),

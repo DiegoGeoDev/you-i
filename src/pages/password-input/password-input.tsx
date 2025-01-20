@@ -6,33 +6,33 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 
-import { InputNumber as InputNumberComponent } from "@/components";
+import { PasswordInput as PasswordInputComponent } from "@/components";
 
 import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
-  number: z.string().optional(),
+  password: z.string(),
 });
 
-function InputNumber() {
+function PasswordInput() {
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      // number: undefined,
-      number: "10",
+      password: "",
+      // password: "10",
     },
   });
 
-  const numberWatch = form.watch("number");
+  const passwordWatch = form.watch("password");
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
     toast({
       title: "onSubmit",
       description:
-        values.number === undefined ? "undefined" : JSON.stringify(values),
+        values.password === undefined ? "undefined" : JSON.stringify(values),
     });
   }
 
@@ -54,12 +54,12 @@ function InputNumber() {
             className="space-y-2"
           >
             <div className="space-y-2">
-              <Label>Number</Label>
+              <Label>Password</Label>
               <Controller
                 control={form.control}
-                name="number"
+                name="password"
                 render={({ field }) => (
-                  <InputNumberComponent
+                  <PasswordInputComponent
                     value={field.value}
                     onChange={field.onChange}
                   />
@@ -70,9 +70,9 @@ function InputNumber() {
             <Button type="submit">Submit</Button>
 
             <span className="block text-muted-foreground w-80">
-              {numberWatch === undefined
+              {passwordWatch === undefined
                 ? "undefined"
-                : JSON.stringify(numberWatch)}
+                : JSON.stringify(passwordWatch)}
             </span>
           </form>
         </div>
@@ -81,4 +81,4 @@ function InputNumber() {
   );
 }
 
-export { InputNumber };
+export { PasswordInput };

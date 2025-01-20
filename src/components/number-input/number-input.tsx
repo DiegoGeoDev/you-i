@@ -13,30 +13,25 @@ const allowedKeys = [
   "Enter",
 ];
 
-type InputNumberProps = Omit<
+type NumberInputProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
   "type" | "onChange"
 > & {
-  onChange: (value: string | undefined) => void;
+  onChange: (value: string) => void;
 };
 
-const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>(
+const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
   ({ value, onChange, ...props }, ref) => {
     // innerValue to work with defaultValues (react-hook-form)
     const [innerValue, setInnerValue] = useState(value);
 
-    function _onChange(value: string | undefined) {
+    function _onChange(value: string) {
       onChange(value);
       setInnerValue(value);
     }
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
       const value = event.target.value;
-
-      if (value === undefined || value === "") {
-        _onChange(undefined);
-        return;
-      }
 
       if (/^-?\d*\.?\d*$/.test(value)) {
         _onChange(value);
@@ -66,6 +61,6 @@ const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>(
     );
   }
 );
-InputNumber.displayName = "InputNumber";
+NumberInput.displayName = "NumberInput";
 
-export { InputNumber };
+export { NumberInput };
