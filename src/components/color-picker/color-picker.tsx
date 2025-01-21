@@ -80,7 +80,7 @@ const ColorPickerContent = React.forwardRef<
   return (
     <PopoverContent
       ref={ref}
-      className={cn("w-[300px] h-[300px] p-2", className)}
+      className={cn("w-full flex flex-col gap-4", className)}
       forceMount={true}
       {...props}
     >

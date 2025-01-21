@@ -69,7 +69,7 @@ function PlacePicker() {
                     onChange={field.onChange}
                     mapId="unique-identifier"
                     placeholder="Escolha um local"
-                    disabled
+                    // disabled
                   >
                     <PlacePickerContent>
                       <PlacePickerMap pointStyle={pointStyle} />
