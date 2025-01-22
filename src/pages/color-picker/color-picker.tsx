@@ -16,7 +16,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
-  color: z.string().optional(),
+  color: z.string().nullable(),
 });
 
 function ColorPicker() {
@@ -25,7 +25,7 @@ function ColorPicker() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      color: undefined,
+      color: null,
       // place: "",
     },
   });
@@ -36,8 +36,7 @@ function ColorPicker() {
     console.log(values);
     toast({
       title: "onSubmit",
-      description:
-        values.color === undefined ? "undefined" : JSON.stringify(values),
+      description: values.color === null ? "null" : JSON.stringify(values),
     });
   }
 
@@ -78,12 +77,23 @@ function ColorPicker() {
               />
             </div>
 
-            <Button type="submit">Submit</Button>
+            <span className="flex gap-4">
+              <Button type="button" onClick={() => form.reset({ color: null })}>
+                reset
+              </Button>
+
+              <Button
+                type="button"
+                onClick={() => form.setValue("color", "#fff")}
+              >
+                setValue
+              </Button>
+
+              <Button type="submit">Submit</Button>
+            </span>
 
             <span className="block text-muted-foreground w-80">
-              {colorWatch === undefined
-                ? "undefined"
-                : JSON.stringify(colorWatch)}
+              {colorWatch === null ? "null" : JSON.stringify(colorWatch)}
             </span>
           </form>
         </div>

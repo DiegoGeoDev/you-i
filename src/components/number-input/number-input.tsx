@@ -11,6 +11,7 @@ const allowedKeys = [
   "Home",
   "End",
   "Enter",
+  "Control",
 ];
 
 type NumberInputProps = Omit<
@@ -40,6 +41,8 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
       if (
+        !event.ctrlKey &&
+        !event.metaKey &&
         !/^-?\d*\.?\d*$/.test(event.key) &&
         !allowedKeys.includes(event.key)
       ) {

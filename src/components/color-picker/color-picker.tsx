@@ -13,12 +13,28 @@ import { cn } from "@/lib/utils";
 
 import { ComponentContext, useComponentContext } from "./hooks";
 
+const hexColorPattern = /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/;
+const hexColorCharPattern = /^[#0-9A-Fa-f]$/;
+
+const allowedKeys = [
+  "Backspace",
+  "Delete",
+  "ArrowLeft",
+  "ArrowRight",
+  "Tab",
+  "Home",
+  "End",
+  "Enter",
+  "Control",
+];
+
 type ColorPickerValue = string;
 
 type ColorPickerWrapperProps = React.HTMLAttributes<HTMLButtonElement> & {
-  value: ColorPickerValue | undefined;
-  onChange: (value: ColorPickerValue | undefined) => void;
+  value: ColorPickerValue | null;
+  onChange: (value: ColorPickerValue | null) => void;
   disabled?: boolean;
+  placeholder?: string;
 };
 
 const ColorPickerWrapper = React.forwardRef<
@@ -26,39 +42,45 @@ const ColorPickerWrapper = React.forwardRef<
   ColorPickerWrapperProps
 >(
   (
-    { value, onChange, disabled = false, className, children, ...props },
+    {
+      value,
+      onChange,
+      disabled = false,
+      placeholder = "Pick a color",
+      className,
+      children,
+      ...props
+    },
     ref
   ) => {
     const [open, setOpen] = useState(false);
 
-    // innerValue to work with defaultValues (react-hook-form)
-    const [innerValue, setInnerValue] = useState(value);
-
-    function _onChange(value: ColorPickerValue | undefined) {
-      onChange(value);
-      setInnerValue(value);
-    }
-
     return (
-      <ComponentContext.Provider
-        value={{ value: innerValue, onChange: _onChange }}
-      >
+      <ComponentContext.Provider value={{ value, onChange }}>
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild disabled={disabled}>
             <Button
               ref={ref}
               type="button"
-              size="icon"
               variant="outline"
               aria-expanded={open}
-              data-is-undefined={innerValue === undefined}
-              className={cn("block", className)}
-              style={{
-                backgroundColor: innerValue,
-              }}
+              data-is-null={value === null}
+              className={cn(
+                "w-full font-normal data-[is-null=true]:text-muted-foreground",
+                className
+              )}
               {...props}
             >
-              <div />
+              <div className="w-full flex items-center gap-4">
+                <span
+                  data-is-null={value === null}
+                  className="w-4 h-4 rounded-full border-muted-foreground border data-[is-null=false]:border-none"
+                  style={{
+                    backgroundColor: value || undefined,
+                  }}
+                />
+                {value !== null ? value : placeholder}
+              </div>
             </Button>
           </PopoverTrigger>
           {children}
@@ -95,7 +117,9 @@ type ColorPickerProps = React.ComponentPropsWithoutRef<typeof HexColorPicker>;
 const ColorPicker = ({ className, children, ...props }: ColorPickerProps) => {
   const { value, onChange } = useComponentContext();
 
-  return <HexColorPicker color={value} onChange={onChange} {...props} />;
+  return (
+    <HexColorPicker color={value || undefined} onChange={onChange} {...props} />
+  );
 };
 
 type ColorPickerInputProps = InputHTMLAttributes<HTMLInputElement>;
@@ -106,12 +130,36 @@ const ColorPickerInput = React.forwardRef<
 >(({ className, children, ...props }, ref) => {
   const { value, onChange } = useComponentContext();
 
+  const [inputValue, setInputValue] = useState(value);
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+
+    setInputValue(value);
+
+    if (hexColorPattern.test(value)) {
+      onChange(value);
+    }
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (
+      !event.ctrlKey &&
+      !event.metaKey &&
+      !hexColorCharPattern.test(event.key) &&
+      !allowedKeys.includes(event.key)
+    ) {
+      event.preventDefault();
+    }
+  };
+
   return (
     <Input
       ref={ref}
       maxLength={7}
-      onChange={(e) => onChange(e?.currentTarget?.value)}
-      value={value}
+      onChange={handleChange}
+      onKeyDown={handleKeyDown}
+      value={inputValue || ""}
       {...props}
     />
   );

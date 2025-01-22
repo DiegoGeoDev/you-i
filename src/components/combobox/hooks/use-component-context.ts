@@ -3,14 +3,12 @@ import { createContext, useContext } from "react";
 import { ComboboxValue, ComboboxItem } from "../combobox";
 
 type ComponentContextType = {
-  value: ComboboxValue | undefined;
-  onChange: (value: ComboboxValue | undefined) => void;
+  value: ComboboxValue | null;
+  onChange: (value: ComboboxValue | null) => void;
   items: ComboboxItem[];
 };
 
-const ComponentContext = createContext<ComponentContextType | undefined>(
-  undefined
-);
+const ComponentContext = createContext<ComponentContextType | null>(null);
 
 function useComponentContext() {
   const context = useContext(ComponentContext);

@@ -25,8 +25,8 @@ type ComboboxItem = Record<"value" | "label", string>;
 type ComboboxValue = string;
 
 type ComboboxWrapperProps = React.HTMLAttributes<HTMLButtonElement> & {
-  value: ComboboxValue | undefined;
-  onChange: (value: ComboboxValue | undefined) => void;
+  value: ComboboxValue | null;
+  onChange: (value: ComboboxValue | null) => void;
   disabled?: boolean;
   placeholder?: string;
   items: ComboboxItem[];
@@ -51,18 +51,8 @@ const ComboboxWrapper = React.forwardRef<
   ) => {
     const [open, setOpen] = useState(false);
 
-    // innerValue to work with defaultValues (react-hook-form)
-    const [innerValue, setInnerValue] = useState(value);
-
-    function _onChange(value: ComboboxValue | undefined) {
-      onChange(value);
-      setInnerValue(value);
-    }
-
     return (
-      <ComponentContext.Provider
-        value={{ value: innerValue, onChange: _onChange, items }}
-      >
+      <ComponentContext.Provider value={{ value, onChange, items }}>
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild disabled={disabled}>
             <Button
@@ -70,19 +60,19 @@ const ComboboxWrapper = React.forwardRef<
               type="button"
               variant="outline"
               aria-expanded={open}
-              data-is-undefined={innerValue === undefined}
+              data-is-null={value === null}
               className={cn(
                 `
                 w-full justify-between truncate font-normal 
-                data-[is-undefined=true]:text-muted-foreground
+                data-[is-null=true]:text-muted-foreground
                 `,
                 className
               )}
               {...props}
             >
               <p className="truncate">
-                {innerValue
-                  ? items.find((item) => item.value === innerValue)?.label
+                {value
+                  ? items.find((item) => item.value === value)?.label
                   : placeholder}
               </p>
               <ChevronsUpDown className="ml-2" size="16" />
@@ -149,7 +139,7 @@ const ComboboxCommand = React.forwardRef<
                 key={item.value}
                 value={item.value}
                 onSelect={(currentValue) => {
-                  onChange(currentValue === value ? "" : currentValue);
+                  onChange(currentValue === value ? null : currentValue);
                 }}
               >
                 <Check

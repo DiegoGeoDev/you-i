@@ -3,13 +3,11 @@ import { createContext, useContext } from "react";
 import { ColorPickerValue } from "../color-picker";
 
 type ComponentContextType = {
-  value: ColorPickerValue | undefined;
-  onChange: (value: ColorPickerValue | undefined) => void;
+  value: ColorPickerValue | null;
+  onChange: (value: ColorPickerValue | null) => void;
 };
 
-const ComponentContext = createContext<ComponentContextType | undefined>(
-  undefined
-);
+const ComponentContext = createContext<ComponentContextType | null>(null);
 
 function useComponentContext() {
   const context = useContext(ComponentContext);
