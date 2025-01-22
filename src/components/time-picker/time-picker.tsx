@@ -19,8 +19,8 @@ type TimePickerValue = {
 };
 
 type TimePickerWrapperProps = React.HTMLAttributes<HTMLDivElement> & {
-  value: TimePickerValue | undefined;
-  onChange: (value: TimePickerValue | undefined) => void;
+  value: TimePickerValue | null;
+  onChange: (value: TimePickerValue | null) => void;
   disabled?: boolean;
 };
 

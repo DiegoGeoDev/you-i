@@ -1,6 +1,8 @@
-import React, { ChangeEvent, InputHTMLAttributes, useState } from "react";
+import React from "react";
 
 import { Input } from "@/components/ui/input";
+
+const numberCharPattern = /^-?\d*\.?\d*$/;
 
 const allowedKeys = [
   "Backspace",
@@ -15,7 +17,7 @@ const allowedKeys = [
 ];
 
 type NumberInputProps = Omit<
-  InputHTMLAttributes<HTMLInputElement>,
+  React.InputHTMLAttributes<HTMLInputElement>,
   "type" | "onChange"
 > & {
   onChange: (value: string) => void;
@@ -23,27 +25,17 @@ type NumberInputProps = Omit<
 
 const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
   ({ value, onChange, ...props }, ref) => {
-    // innerValue to work with defaultValues (react-hook-form)
-    const [innerValue, setInnerValue] = useState(value);
-
-    function _onChange(value: string) {
-      onChange(value);
-      setInnerValue(value);
-    }
-
-    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       const value = event.target.value;
 
-      if (/^-?\d*\.?\d*$/.test(value)) {
-        _onChange(value);
-      }
+      onChange(value);
     };
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
       if (
         !event.ctrlKey &&
         !event.metaKey &&
-        !/^-?\d*\.?\d*$/.test(event.key) &&
+        !numberCharPattern.test(event.key) &&
         !allowedKeys.includes(event.key)
       ) {
         event.preventDefault();
@@ -56,9 +48,10 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
         type="text"
         inputMode="numeric"
         pattern="-?[0-9]*\.?[0-9]*"
-        value={innerValue}
+        value={value}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
+        placeholder="Enter a number"
         {...props}
       />
     );

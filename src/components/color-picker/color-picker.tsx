@@ -1,4 +1,4 @@
-import React, { InputHTMLAttributes, useState } from "react";
+import React from "react";
 import { HexColorPicker } from "react-colorful";
 
 import { Button } from "@/components/ui/button";
@@ -53,7 +53,9 @@ const ColorPickerWrapper = React.forwardRef<
     },
     ref
   ) => {
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = React.useState(false);
+
+    const isNull = value === null;
 
     return (
       <ComponentContext.Provider value={{ value, onChange }}>
@@ -64,7 +66,7 @@ const ColorPickerWrapper = React.forwardRef<
               type="button"
               variant="outline"
               aria-expanded={open}
-              data-is-null={value === null}
+              data-is-null={isNull}
               className={cn(
                 "w-full font-normal data-[is-null=true]:text-muted-foreground",
                 className
@@ -73,13 +75,16 @@ const ColorPickerWrapper = React.forwardRef<
             >
               <div className="w-full flex items-center gap-4">
                 <span
-                  data-is-null={value === null}
-                  className="w-4 h-4 rounded-full border-muted-foreground border data-[is-null=false]:border-none"
+                  data-is-null={isNull}
+                  className={`
+                      w-4 h-4 rounded-full border border-muted-foreground 
+                      data-[is-null=false]:border-none
+                    `}
                   style={{
                     backgroundColor: value || undefined,
                   }}
                 />
-                {value !== null ? value : placeholder}
+                {isNull ? placeholder : value}
               </div>
             </Button>
           </PopoverTrigger>
@@ -122,7 +127,7 @@ const ColorPicker = ({ className, children, ...props }: ColorPickerProps) => {
   );
 };
 
-type ColorPickerInputProps = InputHTMLAttributes<HTMLInputElement>;
+type ColorPickerInputProps = React.InputHTMLAttributes<HTMLInputElement>;
 
 const ColorPickerInput = React.forwardRef<
   HTMLInputElement,
@@ -130,7 +135,11 @@ const ColorPickerInput = React.forwardRef<
 >(({ className, children, ...props }, ref) => {
   const { value, onChange } = useComponentContext();
 
-  const [inputValue, setInputValue] = useState(value);
+  // inputValue is only for visual representation.
+  const [inputValue, setInputValue] = React.useState(value);
+  React.useEffect(() => {
+    setInputValue(value);
+  }, [value]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
@@ -160,6 +169,7 @@ const ColorPickerInput = React.forwardRef<
       onChange={handleChange}
       onKeyDown={handleKeyDown}
       value={inputValue || ""}
+      placeholder="#000000"
       {...props}
     />
   );

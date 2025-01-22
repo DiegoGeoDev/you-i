@@ -20,8 +20,8 @@ function NumberInput() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      // number: "",
-      number: "10",
+      number: "",
+      // number: "10",
     },
   });
 
@@ -67,7 +67,20 @@ function NumberInput() {
               />
             </div>
 
-            <Button type="submit">Submit</Button>
+            <span className="flex gap-4">
+              <Button type="button" onClick={() => form.reset({ number: "" })}>
+                reset
+              </Button>
+
+              <Button
+                type="button"
+                onClick={() => form.setValue("number", "-123.123")}
+              >
+                setValue
+              </Button>
+
+              <Button type="submit">Submit</Button>
+            </span>
 
             <span className="block text-muted-foreground w-80">
               {numberWatch === undefined

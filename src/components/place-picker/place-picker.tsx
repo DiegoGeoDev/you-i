@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { MapPin, X } from "lucide-react";
 import OlStyle, { StyleFunction as OlStyleFunction } from "ol/style/Style";
 
@@ -27,8 +27,8 @@ import {
 type PlacePickerValue = [number, number];
 
 type PlacePickerWrapperProps = React.HTMLAttributes<HTMLButtonElement> & {
-  value: PlacePickerValue | undefined;
-  onChange: (value: PlacePickerValue | undefined) => void;
+  value: PlacePickerValue | null;
+  onChange: (value: PlacePickerValue | null) => void;
   disabled?: boolean;
   placeholder?: string;
   mapId: string;
@@ -51,20 +51,10 @@ const PlacePickerWrapper = React.forwardRef<
     },
     ref
   ) => {
-    const [open, setOpen] = useState(false);
-
-    // innerValue to work with defaultValues (react-hook-form)
-    const [innerValue, setInnerValue] = useState(value);
-
-    function _onChange(value: PlacePickerValue | undefined) {
-      onChange(value);
-      setInnerValue(value);
-    }
+    const [open, setOpen] = React.useState(false);
 
     return (
-      <ComponentContext.Provider
-        value={{ value: innerValue, onChange: _onChange, disabled, mapId }}
-      >
+      <ComponentContext.Provider value={{ value, onChange, disabled, mapId }}>
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <Button
@@ -72,12 +62,12 @@ const PlacePickerWrapper = React.forwardRef<
               type="button"
               variant="outline"
               aria-expanded={open}
-              data-is-undefined={innerValue === undefined}
+              data-is-null={value === null}
               data-is-disabled={disabled}
               className={cn(
                 `
                 w-full justify-start font-normal 
-                data-[is-undefined=true]:text-muted-foreground
+                data-[is-null=true]:text-muted-foreground
                 data-[is-disabled=true]:text-muted-foreground
                 `,
                 className
@@ -85,8 +75,8 @@ const PlacePickerWrapper = React.forwardRef<
               {...props}
             >
               <MapPin className="mr-2" size="16" />
-              {innerValue !== undefined
-                ? `${innerValue[0].toFixed(6)}, ${innerValue[1].toFixed(6)}`
+              {value !== null
+                ? `${value[0].toFixed(6)}, ${value[1].toFixed(6)}`
                 : placeholder}
             </Button>
           </PopoverTrigger>
@@ -129,10 +119,11 @@ const PlacePickerMap = React.forwardRef<
 >(({ pointStyle, className, children, ...props }, ref) => {
   const { value, mapId } = useComponentContext();
 
-  const zoom = value !== undefined ? 12 : undefined;
+  const zoom = value !== null ? 12 : undefined;
+  const center = value || undefined;
 
   return (
-    <MapProvider mapId={mapId} center={value} zoom={zoom}>
+    <MapProvider mapId={mapId} center={center} zoom={zoom}>
       <MapContainer
         ref={ref}
         id={mapId}
@@ -169,9 +160,9 @@ const PlacePickerPoint = ({ pointStyle }: PlacePickerPointProps) => {
         type="button"
         className="w-8 h-8 p-2 rounded-full"
         onClick={() => {
-          onChange(undefined);
+          onChange(null);
         }}
-        disabled={disabled || value === undefined}
+        disabled={disabled || value === null}
       >
         <X size={16} />
       </Button>

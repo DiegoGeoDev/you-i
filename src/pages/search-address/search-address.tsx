@@ -17,6 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 const formSchema = z.object({
   address: z
     .object({
+      osm_id: z.number(),
       address: z
         .object({
           city: z.string().optional(),
@@ -35,7 +36,7 @@ const formSchema = z.object({
       x: z.number(),
       y: z.number(),
     })
-    .optional(),
+    .nullable(),
 });
 
 function SearchAddress() {
@@ -44,8 +45,9 @@ function SearchAddress() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      address: undefined,
+      address: null,
       // address: {
+      //   osm_id: 264374,
       //   address: {
       //     country: "Brasil",
       //     country_code: "br",
@@ -110,7 +112,38 @@ function SearchAddress() {
               />
             </div>
 
-            <Button type="submit">Submit</Button>
+            <span className="flex gap-4">
+              <Button
+                type="button"
+                onClick={() => form.reset({ address: null })}
+              >
+                reset
+              </Button>
+
+              <Button
+                type="button"
+                onClick={() =>
+                  form.setValue("address", {
+                    osm_id: 123,
+                    address: {
+                      country: "Brasil",
+                      country_code: "br",
+                      county: "qwerty",
+                      municipality: "Jacareí",
+                      state: "São Paulo",
+                    },
+                    display_name: "qwerty",
+                    type: "administrative",
+                    x: -45.9723075,
+                    y: -23.3050682,
+                  })
+                }
+              >
+                setValue
+              </Button>
+
+              <Button type="submit">Submit</Button>
+            </span>
 
             <span className="block text-muted-foreground w-[1000px]">
               {addressWatch === undefined

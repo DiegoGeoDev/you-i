@@ -1,4 +1,4 @@
-import React, { ChangeEvent, InputHTMLAttributes, useState } from "react";
+import React from "react";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -7,28 +7,31 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
 type PasswordInputProps = Omit<
-  InputHTMLAttributes<HTMLInputElement>,
+  React.InputHTMLAttributes<HTMLInputElement>,
   "type" | "onChange"
 > & {
   onChange: (value: string) => void;
+  showPassword?: boolean;
 };
 
 const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
-  ({ value, onChange, className, disabled, ...props }, ref) => {
-    const [showPassword, setShowPassword] = React.useState(false);
+  (
+    {
+      value,
+      onChange,
+      showPassword: _showPassword = false,
+      className,
+      disabled,
+      ...props
+    },
+    ref
+  ) => {
+    const [showPassword, setShowPassword] = React.useState(_showPassword);
 
-    // innerValue to work with defaultValues (react-hook-form)
-    const [innerValue, setInnerValue] = useState(value);
-
-    function _onChange(value: string) {
-      onChange(value);
-      setInnerValue(value);
-    }
-
-    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       const value = event.target.value;
 
-      _onChange(value);
+      onChange(value);
     };
 
     return (
@@ -37,8 +40,9 @@ const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
           ref={ref}
           type={showPassword ? "text" : "password"}
           className={cn("hide-password-toggle pr-10", className)}
-          value={innerValue}
+          value={value}
           onChange={handleChange}
+          placeholder="Enter a password"
           {...props}
         />
         <Button

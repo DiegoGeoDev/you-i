@@ -22,7 +22,7 @@ const formSchema = z.object({
       minutes: z.string(),
       period: z.enum(["AM", "PM"]),
     })
-    .optional(),
+    .nullable(),
 });
 
 function TimePicker() {
@@ -31,7 +31,7 @@ function TimePicker() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      // time: undefined,
+      // time: null,
       time: {
         hours: "10",
         minutes: "15",
@@ -87,7 +87,26 @@ function TimePicker() {
               />
             </div>
 
-            <Button type="submit">Submit</Button>
+            <span className="flex gap-4">
+              <Button type="button" onClick={() => form.reset({ time: null })}>
+                reset
+              </Button>
+
+              <Button
+                type="button"
+                onClick={() =>
+                  form.setValue("time", {
+                    hours: "11",
+                    minutes: "22",
+                    period: "PM",
+                  })
+                }
+              >
+                setValue
+              </Button>
+
+              <Button type="submit">Submit</Button>
+            </span>
 
             <span className="block text-muted-foreground w-80">
               {timeWatch === undefined

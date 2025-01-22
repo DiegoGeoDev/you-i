@@ -33,9 +33,12 @@ const useSearchAddress = ({
   const groupByType = useCallback(
     (data: any[]): Record<string, SearchAddressValue[]> => {
       return data.reduce((acc, item) => {
-        const { address, display_name, type, lat, lon } = item;
+        const { osm_id, address, display_name, type, lat, lon } = item;
+
+        console.log(item);
 
         const currentItem: SearchAddressValue = {
+          osm_id,
           address: {
             city: address?.city,
             city_district: address?.city_district,

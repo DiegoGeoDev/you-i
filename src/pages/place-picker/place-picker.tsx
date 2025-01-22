@@ -16,7 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import { pointStyle } from "./point-style";
 
 const formSchema = z.object({
-  place: z.tuple([z.number(), z.number()]).optional(),
+  place: z.tuple([z.number(), z.number()]).nullable(),
 });
 
 function PlacePicker() {
@@ -25,8 +25,8 @@ function PlacePicker() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      // place: undefined,
-      place: [-41.19758412569701, -16.26055046355725],
+      place: null,
+      // place: [-41.19758412569701, -16.26055046355725],
     },
   });
 
@@ -79,7 +79,20 @@ function PlacePicker() {
               />
             </div>
 
-            <Button type="submit">Submit</Button>
+            <span className="flex gap-4">
+              <Button type="button" onClick={() => form.reset({ place: null })}>
+                reset
+              </Button>
+
+              <Button
+                type="button"
+                onClick={() => form.setValue("place", [-45, -23])}
+              >
+                setValue
+              </Button>
+
+              <Button type="submit">Submit</Button>
+            </span>
 
             <span className="block text-muted-foreground w-80">
               {placeWatch === undefined

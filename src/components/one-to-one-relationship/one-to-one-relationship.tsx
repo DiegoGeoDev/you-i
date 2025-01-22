@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   DndContext,
   DragEndEvent,
@@ -26,8 +26,8 @@ type OneToOneRelationshipValue = Record<
 >;
 
 type OneToOneRelationshipWrapperProps = React.HTMLAttributes<HTMLDivElement> & {
-  value: OneToOneRelationshipValue[] | undefined;
-  onChange: (value: OneToOneRelationshipValue[] | undefined) => void;
+  value: OneToOneRelationshipValue[] | null;
+  onChange: (value: OneToOneRelationshipValue[] | null) => void;
   disabled?: boolean;
 };
 
@@ -39,18 +39,8 @@ const OneToOneRelationshipWrapper = React.forwardRef<
     { value, onChange, disabled = false, children, className, ...props },
     ref
   ) => {
-    // innerValue to work with defaultValues (react-hook-form)
-    const [innerValue, setInnerValue] = useState(value);
-
-    function _onChange(value: OneToOneRelationshipValue[] | undefined) {
-      onChange(value);
-      setInnerValue(value);
-    }
-
     return (
-      <ComponentContext.Provider
-        value={{ value: innerValue, onChange: _onChange, disabled }}
-      >
+      <ComponentContext.Provider value={{ value, onChange, disabled }}>
         <div
           ref={ref}
           className={cn("flex flex-col gap-4 w-full h-full", className)}
@@ -79,8 +69,8 @@ const OneToOneRelationshipReset = React.forwardRef<
       type="button"
       className={cn("ml-auto", className)}
       variant="outline"
-      disabled={value === undefined || disabled}
-      onClick={() => onChange(undefined)}
+      disabled={value === null || disabled}
+      onClick={() => onChange(null)}
       {...props}
     >
       <ListRestart size={16} className="mr-2" />
@@ -316,7 +306,7 @@ const OneToOneRelationshipRelatedItems = () => {
       (relation) => relation.targetItem.value !== targetValue
     );
 
-    onChange(filtered?.length === 0 ? undefined : filtered);
+    onChange(filtered?.length === 0 ? null : filtered || null);
   };
 
   return (

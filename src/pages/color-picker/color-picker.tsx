@@ -26,7 +26,7 @@ function ColorPicker() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       color: null,
-      // place: "",
+      // color: "",
     },
   });
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { ChevronsUpDown } from "lucide-react";
 import { CommandLoading } from "cmdk";
 
@@ -17,6 +17,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
+import { ListComponent } from "@/components/list-component";
+
 import { cn } from "@/lib/utils";
 
 import { useSearchAddress } from "./hooks";
@@ -30,6 +32,7 @@ type SearchOptions = {
 };
 
 type SearchAddressValue = {
+  osm_id: number;
   address?: {
     city?: string;
     city_district?: string;
@@ -48,8 +51,8 @@ type SearchAddressValue = {
 };
 
 type SearchAddressWrapperProps = React.HTMLAttributes<HTMLButtonElement> & {
-  value: SearchAddressValue | undefined;
-  onChange: (value: SearchAddressValue | undefined) => void;
+  value: SearchAddressValue | null;
+  onChange: (value: SearchAddressValue | null) => void;
   disabled?: boolean;
   placeholder?: string;
 };
@@ -70,20 +73,10 @@ const SearchAddressWrapper = React.forwardRef<
     },
     ref
   ) => {
-    const [open, setOpen] = useState(false);
-
-    // innerValue to work with defaultValues (react-hook-form)
-    const [innerValue, setInnerValue] = useState(value);
-
-    function _onChange(value: SearchAddressValue | undefined) {
-      onChange(value);
-      setInnerValue(value);
-    }
+    const [open, setOpen] = React.useState(false);
 
     return (
-      <ComponentContext.Provider
-        value={{ value: innerValue, onChange: _onChange }}
-      >
+      <ComponentContext.Provider value={{ value, onChange }}>
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild disabled={disabled}>
             <Button
@@ -91,18 +84,18 @@ const SearchAddressWrapper = React.forwardRef<
               type="button"
               variant="outline"
               aria-expanded={open}
-              data-is-undefined={innerValue === undefined}
+              data-is-null={value === null}
               className={cn(
                 `
                 w-full justify-between truncate font-normal 
-                data-[is-undefined=true]:text-muted-foreground
+                data-[is-null=true]:text-muted-foreground
                 `,
                 className
               )}
               {...props}
             >
               <p className="truncate">
-                {innerValue ? innerValue.display_name : placeholder}
+                {value ? value.display_name : placeholder}
               </p>
               <ChevronsUpDown className="ml-2" size="16" />
             </Button>
@@ -182,20 +175,23 @@ const SearchAddressCommand = React.forwardRef<
                 key={type}
                 heading={type.charAt(0).toUpperCase() + type.slice(1)}
               >
-                {items.map((item, index) => (
-                  <CommandItem
-                    key={index}
-                    value={item.display_name}
-                    onSelect={(currentValue: string) => {
-                      const item = results[type]?.find(
-                        (item) => item.display_name === currentValue
-                      );
-                      onChange(item ?? undefined);
-                    }}
-                  >
-                    {item.display_name}
-                  </CommandItem>
-                ))}
+                <ListComponent
+                  data={items || []}
+                  renderItem={(item) => (
+                    <CommandItem
+                      key={item.osm_id}
+                      value={item.display_name}
+                      onSelect={(currentValue: string) => {
+                        const item = results[type]?.find(
+                          (item) => item.display_name === currentValue
+                        );
+                        onChange(item ?? null);
+                      }}
+                    >
+                      {item.display_name}
+                    </CommandItem>
+                  )}
+                />
               </CommandGroup>
             ))
           ) : (

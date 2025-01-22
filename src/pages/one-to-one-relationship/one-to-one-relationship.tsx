@@ -27,7 +27,7 @@ const formSchema = z.object({
         targetItem: z.object({ value: z.string(), label: z.string() }),
       })
     )
-    .optional(),
+    .nullable(),
 });
 
 function OneToOneRelationship() {
@@ -36,7 +36,7 @@ function OneToOneRelationship() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      // relationship: undefined,
+      // relationship: null,
       relationship: [
         {
           inputItem: { value: "input 4", label: "input 4" },
@@ -98,7 +98,30 @@ function OneToOneRelationship() {
               />
             </div>
 
-            <Button type="submit">Submit</Button>
+            <span className="flex gap-4">
+              <Button
+                type="button"
+                onClick={() => form.reset({ relationship: null })}
+              >
+                reset
+              </Button>
+
+              <Button
+                type="button"
+                onClick={() =>
+                  form.setValue("relationship", [
+                    {
+                      inputItem: { value: "input 1", label: "input 1" },
+                      targetItem: { value: "target 5", label: "target 5" },
+                    },
+                  ])
+                }
+              >
+                setValue
+              </Button>
+
+              <Button type="submit">Submit</Button>
+            </span>
 
             <span className="block text-muted-foreground w-[1000px]">
               {relationshipWatch === undefined

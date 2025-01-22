@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+
+import { ListComponent } from "@/components/list-component";
 
 import { cn } from "@/lib/utils";
 
@@ -49,7 +51,7 @@ const ComboboxWrapper = React.forwardRef<
     },
     ref
   ) => {
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = React.useState(false);
 
     return (
       <ComponentContext.Provider value={{ value, onChange, items }}>
@@ -134,23 +136,26 @@ const ComboboxCommand = React.forwardRef<
         <CommandList>
           <CommandEmpty>{emptyText}</CommandEmpty>
           <CommandGroup>
-            {items.map((item) => (
-              <CommandItem
-                key={item.value}
-                value={item.value}
-                onSelect={(currentValue) => {
-                  onChange(currentValue === value ? null : currentValue);
-                }}
-              >
-                <Check
-                  className={cn(
-                    "mr-2 h-4 w-4",
-                    value === item.value ? "opacity-100" : "opacity-0"
-                  )}
-                />
-                {item.label}
-              </CommandItem>
-            ))}
+            <ListComponent
+              data={items || []}
+              renderItem={(item) => (
+                <CommandItem
+                  key={item.value}
+                  value={item.value}
+                  onSelect={(currentValue) => {
+                    onChange(currentValue === value ? null : currentValue);
+                  }}
+                >
+                  <Check
+                    className={cn(
+                      "mr-2 h-4 w-4",
+                      value === item.value ? "opacity-100" : "opacity-0"
+                    )}
+                  />
+                  {item.label}
+                </CommandItem>
+              )}
+            />
           </CommandGroup>
         </CommandList>
       </Command>

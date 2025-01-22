@@ -68,7 +68,23 @@ function PasswordInput() {
               />
             </div>
 
-            <Button type="submit">Submit</Button>
+            <span className="flex gap-4">
+              <Button
+                type="button"
+                onClick={() => form.reset({ password: "" })}
+              >
+                reset
+              </Button>
+
+              <Button
+                type="button"
+                onClick={() => form.setValue("password", "!@#r00T")}
+              >
+                setValue
+              </Button>
+
+              <Button type="submit">Submit</Button>
+            </span>
 
             <span className="block text-muted-foreground w-80">
               {passwordWatch === undefined

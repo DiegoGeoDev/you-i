@@ -3,13 +3,11 @@ import { createContext, useContext } from "react";
 import { SearchAddressValue } from "../search-address";
 
 type ComponentContextType = {
-  value: SearchAddressValue | undefined;
-  onChange: (value: SearchAddressValue | undefined) => void;
+  value: SearchAddressValue | null;
+  onChange: (value: SearchAddressValue | null) => void;
 };
 
-const ComponentContext = createContext<ComponentContextType | undefined>(
-  undefined
-);
+const ComponentContext = createContext<ComponentContextType | null>(null);
 
 function useComponentContext() {
   const context = useContext(ComponentContext);
