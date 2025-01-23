@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Pentagon, X } from "lucide-react";
 import OlStyle, { StyleFunction as OlStyleFunction } from "ol/style/Style";
 import { Coordinate as OlCoordinate } from "ol/coordinate";
@@ -34,8 +34,8 @@ type DrawSinglePolygonHTMLDivElement = Omit<
   "onChange"
 >;
 type DrawSinglePolygonWrapperProps = DrawSinglePolygonHTMLDivElement & {
-  value: DrawSinglePolygonValue | undefined;
-  onChange: (value: DrawSinglePolygonValue | undefined) => void;
+  value: DrawSinglePolygonValue | null;
+  onChange: (value: DrawSinglePolygonValue | null) => void;
   disabled?: boolean;
   polygonOptions: DrawSinglePolygonOptions;
   drawOptions?: DrawSinglePolygonDrawOptions;
@@ -64,18 +64,8 @@ const DrawSinglePolygonWrapper = React.forwardRef<
     },
     ref
   ) => {
-    // innerValue to work with defaultValues (react-hook-form)
-    const [innerValue, setInnerValue] = useState(value);
-
-    function _onChange(value: DrawSinglePolygonValue | undefined) {
-      onChange(value);
-      setInnerValue(value);
-    }
-
     return (
-      <ComponentContext.Provider
-        value={{ value: innerValue, onChange: _onChange, disabled }}
-      >
+      <ComponentContext.Provider value={{ value, onChange, disabled }}>
         <DrawSinglePolygonProvider
           polygonOptions={polygonOptions}
           drawOptions={drawOptions}
@@ -109,6 +99,7 @@ const DrawSinglePolygon = React.forwardRef<
   const { isActive, handleDrawSinglePolygon } = useDrawSinglePolygon();
 
   const isDisabled = disabled || isActive;
+  const hasPlaceholder = placeholder !== undefined;
 
   return (
     <Button
@@ -121,11 +112,11 @@ const DrawSinglePolygon = React.forwardRef<
       {...props}
     >
       <Pentagon
-        data-has-placeholder={placeholder !== undefined}
+        data-has-placeholder={hasPlaceholder}
         className="data-[has-placeholder=true]:mr-2"
         size="16"
       />
-      {placeholder !== undefined ? placeholder : null}
+      {hasPlaceholder ? placeholder : null}
     </Button>
   );
 });
@@ -140,7 +131,7 @@ const DrawSinglePolygonReset = React.forwardRef<
   const { value, disabled } = useComponentContext();
   const { isActive, handleClearSinglePolygon } = useDrawSinglePolygon();
 
-  const isDisabled = disabled || isActive || value === undefined;
+  const isDisabled = disabled || isActive || value === null;
 
   return (
     <Button

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { MapPin, X } from "lucide-react";
 import OlStyle, { StyleFunction as OlStyleFunction } from "ol/style/Style";
 import { Coordinate as OlCoordinate } from "ol/coordinate";
@@ -34,8 +34,8 @@ type DrawSinglePointHTMLDivElement = Omit<
   "onChange"
 >;
 type DrawSinglePointWrapperProps = DrawSinglePointHTMLDivElement & {
-  value: DrawSinglePointValue | undefined;
-  onChange: (value: DrawSinglePointValue | undefined) => void;
+  value: DrawSinglePointValue | null;
+  onChange: (value: DrawSinglePointValue | null) => void;
   disabled?: boolean;
   pointOptions: DrawSinglePointOptions;
   drawOptions?: DrawSinglePointDrawOptions;
@@ -64,18 +64,8 @@ const DrawSinglePointWrapper = React.forwardRef<
     },
     ref
   ) => {
-    // innerValue to work with defaultValues (react-hook-form)
-    const [innerValue, setInnerValue] = useState(value);
-
-    function _onChange(value: DrawSinglePointValue | undefined) {
-      onChange(value);
-      setInnerValue(value);
-    }
-
     return (
-      <ComponentContext.Provider
-        value={{ value: innerValue, onChange: _onChange, disabled }}
-      >
+      <ComponentContext.Provider value={{ value, onChange, disabled }}>
         <DrawSinglePointProvider
           pointOptions={pointOptions}
           drawOptions={drawOptions}
@@ -109,6 +99,7 @@ const DrawSinglePoint = React.forwardRef<
   const { isActive, handleDrawSinglePoint } = useDrawSinglePoint();
 
   const isDisabled = disabled || isActive;
+  const hasPlaceholder = placeholder !== undefined;
 
   return (
     <Button
@@ -121,11 +112,11 @@ const DrawSinglePoint = React.forwardRef<
       {...props}
     >
       <MapPin
-        data-has-placeholder={placeholder !== undefined}
+        data-has-placeholder={hasPlaceholder}
         className="data-[has-placeholder=true]:mr-2"
         size="16"
       />
-      {placeholder !== undefined ? placeholder : null}
+      {hasPlaceholder ? placeholder : undefined}
     </Button>
   );
 });
@@ -140,7 +131,7 @@ const DrawSinglePointReset = React.forwardRef<
   const { value, disabled } = useComponentContext();
   const { isActive, handleClearSinglePoint } = useDrawSinglePoint();
 
-  const isDisabled = disabled || isActive || value === undefined;
+  const isDisabled = disabled || isActive || value === null;
 
   return (
     <Button

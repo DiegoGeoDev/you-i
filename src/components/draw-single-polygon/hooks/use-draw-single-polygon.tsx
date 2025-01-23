@@ -54,11 +54,11 @@ function DrawSinglePolygonProvider({
 
   const editorRef = useRef<SinglePolygonEditor>();
 
-  const [innerIsActive, setInnerIsActive] = useState(false);
+  const [internalIsActive, setInternalIsActive] = useState(false);
 
-  const isModify = value !== undefined;
+  const isModify = value !== null;
 
-  // set vectorSourceRef\vectorLayerRef
+  // set editorRef
   useEffect(() => {
     if (!map) return;
 
@@ -69,11 +69,13 @@ function DrawSinglePolygonProvider({
     );
     editorRef.current.addVectorLayer();
 
-    if (value !== undefined) {
+    if (value !== null) {
       editorRef.current.addPolygon(value);
+      editorRef.current.zoomToVectorLayer();
     }
 
     return () => {
+      onAbortDrawing();
       editorRef.current?.removeVectorLayer();
     };
   }, [map]);
@@ -84,7 +86,7 @@ function DrawSinglePolygonProvider({
     if (handleActiveChange) {
       handleActiveChange(false);
     }
-    setInnerIsActive(false);
+    setInternalIsActive(false);
 
     sonnerToast.dismiss(toastId);
   }
@@ -95,7 +97,7 @@ function DrawSinglePolygonProvider({
     if (handleActiveChange) {
       handleActiveChange(true);
     }
-    setInnerIsActive(true);
+    setInternalIsActive(true);
 
     sonnerToast(toastOptions?.title || "Single Polygon", {
       id: toastId,
@@ -116,7 +118,7 @@ function DrawSinglePolygonProvider({
   }
 
   const drawSinglePolygonvalue = {
-    isActive: isActive !== undefined ? isActive : innerIsActive,
+    isActive: isActive !== undefined ? isActive : internalIsActive,
     handleDrawSinglePolygon,
     handleClearSinglePolygon,
   };

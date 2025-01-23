@@ -3,14 +3,12 @@ import { createContext, useContext } from "react";
 import { DrawSinglePointValue } from "../draw-single-point";
 
 type ComponentContextType = {
-  value: DrawSinglePointValue | undefined;
-  onChange: (value: DrawSinglePointValue | undefined) => void;
+  value: DrawSinglePointValue | null;
+  onChange: (value: DrawSinglePointValue | null) => void;
   disabled?: boolean;
 };
 
-const ComponentContext = createContext<ComponentContextType | undefined>(
-  undefined
-);
+const ComponentContext = createContext<ComponentContextType | null>(null);
 
 function useComponentContext() {
   const context = useContext(ComponentContext);

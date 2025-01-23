@@ -54,22 +54,24 @@ function DrawSinglePointProvider({
 
   const editorRef = useRef<SinglePointEditor>();
 
-  const [innerIsActive, setInnerIsActive] = useState(false);
+  const [internalIsActive, setInternalIsActive] = useState(false);
 
-  const isModify = value !== undefined;
+  const isModify = value !== null;
 
-  // set vectorSourceRef\vectorLayerRef
+  // set editorRef
   useEffect(() => {
     if (!map) return;
 
     editorRef.current = new SinglePointEditor(map, pointOptions, drawOptions);
     editorRef.current.addVectorLayer();
 
-    if (value !== undefined) {
+    if (value !== null) {
       editorRef.current.addPoint(value);
+      editorRef.current.zoomToVectorLayer();
     }
 
     return () => {
+      onAbortDrawing();
       editorRef.current?.removeVectorLayer();
     };
   }, [map]);
@@ -80,7 +82,7 @@ function DrawSinglePointProvider({
     if (handleActiveChange) {
       handleActiveChange(false);
     }
-    setInnerIsActive(false);
+    setInternalIsActive(false);
 
     sonnerToast.dismiss(toastId);
   }
@@ -91,7 +93,7 @@ function DrawSinglePointProvider({
     if (handleActiveChange) {
       handleActiveChange(true);
     }
-    setInnerIsActive(true);
+    setInternalIsActive(true);
 
     sonnerToast(toastOptions?.title || "Single Point", {
       id: toastId,
@@ -112,7 +114,7 @@ function DrawSinglePointProvider({
   }
 
   const drawSinglePointvalue = {
-    isActive: isActive !== undefined ? isActive : innerIsActive,
+    isActive: isActive !== undefined ? isActive : internalIsActive,
     handleDrawSinglePoint,
     handleClearSinglePoint,
   };

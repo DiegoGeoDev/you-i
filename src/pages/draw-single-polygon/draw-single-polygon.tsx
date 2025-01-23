@@ -28,7 +28,7 @@ import {
 } from "./ol-styles";
 
 const formSchema = z.object({
-  singlePolygon: z.array(z.array(z.tuple([z.number(), z.number()]))).optional(),
+  singlePolygon: z.array(z.array(z.tuple([z.number(), z.number()]))).nullable(),
 });
 
 const mapId = "draw-single-polygon";
@@ -45,7 +45,7 @@ function DrawSinglePolygon() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      // singlePolygon: undefined,
+      // singlePolygon: nll,
       singlePolygon: [
         [
           [-53.062498211860664, -19.53294142904184],
@@ -119,7 +119,34 @@ function DrawSinglePolygon() {
                 />
               </div>
 
-              <Button type="submit">Submit</Button>
+              <span className="flex gap-4">
+                <Button
+                  type="button"
+                  onClick={() => form.reset({ singlePolygon: null })}
+                  disabled
+                >
+                  reset
+                </Button>
+
+                <Button
+                  type="button"
+                  onClick={() =>
+                    form.setValue("singlePolygon", [
+                      [
+                        [-53.062498211860664, -19.53294142904184],
+                        [-49.93751013278961, -16.412266396127634],
+                        [-47.437508940696716, -19.97410489153522],
+                        [-53.062498211860664, -19.53294142904184],
+                      ],
+                    ])
+                  }
+                  disabled
+                >
+                  setValue
+                </Button>
+
+                <Button type="submit">Submit</Button>
+              </span>
 
               <span className="block text-muted-foreground w-80">
                 {singlePolygonWatch === undefined
