@@ -55,6 +55,11 @@ const componentsConfig: ComponentsConfig[] = [
     to: "/color-picker",
     title: "Color Picker",
   },
+  {
+    id: self.crypto.randomUUID(),
+    to: "/copy-to-clipboard",
+    title: "Copy To Clipboard",
+  },
 ];
 
 export { componentsConfig, type ComponentsConfig };

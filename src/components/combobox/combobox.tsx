@@ -26,10 +26,9 @@ type ComboboxItem = Record<"value" | "label", string>;
 
 type ComboboxValue = string;
 
-type ComboboxWrapperProps = React.HTMLAttributes<HTMLButtonElement> & {
+type ComboboxWrapperProps = React.ComponentPropsWithoutRef<typeof Button> & {
   value: ComboboxValue | null;
   onChange: (value: ComboboxValue | null) => void;
-  disabled?: boolean;
   placeholder?: string;
   items: ComboboxItem[];
 };
@@ -131,7 +130,7 @@ const ComboboxCommand = React.forwardRef<
     const { value, onChange, items } = useComponentContext();
 
     return (
-      <Command ref={ref} {...props}>
+      <Command ref={ref} className={cn(className)} {...props}>
         <CommandInput placeholder={placeholder} />
         <CommandList>
           <CommandEmpty>{emptyText}</CommandEmpty>

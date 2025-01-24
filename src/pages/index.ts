@@ -1,5 +1,6 @@
 export * from "./color-picker";
 export * from "./combobox";
+export * from "./copy-to-clipboard";
 export * from "./draw-single-point";
 export * from "./draw-single-polygon";
 export * from "./home";

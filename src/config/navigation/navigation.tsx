@@ -12,6 +12,7 @@ import {
   Combobox,
   SearchAddress,
   ColorPicker,
+  CopyToClipboard,
 } from "@/pages";
 
 const iconSize = 20;
@@ -173,6 +174,19 @@ const navigationConfig: NavigationConfig[] = [
         page: <ColorPicker />,
         isNavigationItem: false,
         pathTest: /^\/color\-picker$/,
+      },
+    ],
+  },
+  {
+    id: self.crypto.randomUUID(),
+    data: [
+      {
+        id: self.crypto.randomUUID(),
+        path: "/copy-to-clipboard",
+        title: "Copy To Clipboard",
+        page: <CopyToClipboard />,
+        isNavigationItem: false,
+        pathTest: /^\/copy\-to\-clipboard$/,
       },
     ],
   },

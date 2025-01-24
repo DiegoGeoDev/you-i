@@ -2,6 +2,8 @@ import React from "react";
 
 import { Input } from "@/components/ui/input";
 
+import { cn } from "@/lib/utils";
+
 const numberCharPattern = /^-?\d*\.?\d*$/;
 
 const allowedKeys = [
@@ -24,7 +26,7 @@ type NumberInputProps = Omit<
 };
 
 const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
-  ({ value, onChange, ...props }, ref) => {
+  ({ value, className, onChange, ...props }, ref) => {
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       const value = event.target.value;
 
@@ -45,6 +47,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
     return (
       <Input
         ref={ref}
+        className={cn(className)}
         type="text"
         inputMode="numeric"
         pattern="-?[0-9]*\.?[0-9]*"

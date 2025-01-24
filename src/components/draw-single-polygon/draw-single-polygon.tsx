@@ -87,7 +87,7 @@ const DrawSinglePolygonWrapper = React.forwardRef<
 );
 DrawSinglePolygonWrapper.displayName = "DrawSinglePolygonWrapper";
 
-type DrawSinglePolygonProps = React.HTMLAttributes<HTMLButtonElement> & {
+type DrawSinglePolygonProps = React.ComponentPropsWithoutRef<typeof Button> & {
   placeholder?: string;
 };
 
@@ -122,7 +122,9 @@ const DrawSinglePolygon = React.forwardRef<
 });
 DrawSinglePolygon.displayName = "DrawSinglePolygon";
 
-type DrawSinglePolygonResetProps = React.HTMLAttributes<HTMLButtonElement>;
+type DrawSinglePolygonResetProps = React.ComponentPropsWithoutRef<
+  typeof Button
+>;
 
 const DrawSinglePolygonReset = React.forwardRef<
   React.ElementRef<typeof Button>,

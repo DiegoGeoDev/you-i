@@ -50,10 +50,11 @@ type SearchAddressValue = {
   y: number;
 };
 
-type SearchAddressWrapperProps = React.HTMLAttributes<HTMLButtonElement> & {
+type SearchAddressWrapperProps = React.ComponentPropsWithoutRef<
+  typeof Button
+> & {
   value: SearchAddressValue | null;
   onChange: (value: SearchAddressValue | null) => void;
-  disabled?: boolean;
   placeholder?: string;
 };
 

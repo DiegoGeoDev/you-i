@@ -54,8 +54,9 @@ const OneToOneRelationshipWrapper = React.forwardRef<
 );
 OneToOneRelationshipWrapper.displayName = "OneToOneRelationshipWrapper";
 
-type OneToOneRelationshipResetProps = React.HTMLAttributes<HTMLButtonElement> &
-  React.ComponentPropsWithoutRef<typeof Button> & { placeholder?: string };
+type OneToOneRelationshipResetProps = React.ComponentPropsWithoutRef<
+  typeof Button
+> & { placeholder?: string };
 
 const OneToOneRelationshipReset = React.forwardRef<
   React.ElementRef<typeof Button>,

@@ -30,10 +30,9 @@ const allowedKeys = [
 
 type ColorPickerValue = string;
 
-type ColorPickerWrapperProps = React.HTMLAttributes<HTMLButtonElement> & {
+type ColorPickerWrapperProps = React.ComponentPropsWithoutRef<typeof Button> & {
   value: ColorPickerValue | null;
   onChange: (value: ColorPickerValue | null) => void;
-  disabled?: boolean;
   placeholder?: string;
 };
 
@@ -165,6 +164,7 @@ const ColorPickerInput = React.forwardRef<
   return (
     <Input
       ref={ref}
+      className={cn(className)}
       maxLength={7}
       onChange={handleChange}
       onKeyDown={handleKeyDown}

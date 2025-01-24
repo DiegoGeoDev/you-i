@@ -26,10 +26,9 @@ import {
 
 type PlacePickerValue = [number, number];
 
-type PlacePickerWrapperProps = React.HTMLAttributes<HTMLButtonElement> & {
+type PlacePickerWrapperProps = React.ComponentPropsWithoutRef<typeof Button> & {
   value: PlacePickerValue | null;
   onChange: (value: PlacePickerValue | null) => void;
-  disabled?: boolean;
   placeholder?: string;
   mapId: string;
 };

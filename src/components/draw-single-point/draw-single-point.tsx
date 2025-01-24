@@ -87,7 +87,7 @@ const DrawSinglePointWrapper = React.forwardRef<
 );
 DrawSinglePointWrapper.displayName = "DrawSinglePointWrapper";
 
-type DrawSinglePointProps = React.HTMLAttributes<HTMLButtonElement> & {
+type DrawSinglePointProps = React.ComponentPropsWithoutRef<typeof Button> & {
   placeholder?: string;
 };
 
@@ -122,7 +122,7 @@ const DrawSinglePoint = React.forwardRef<
 });
 DrawSinglePoint.displayName = "DrawSinglePoint";
 
-type DrawSinglePointResetProps = React.HTMLAttributes<HTMLButtonElement>;
+type DrawSinglePointResetProps = React.ComponentPropsWithoutRef<typeof Button>;
 
 const DrawSinglePointReset = React.forwardRef<
   React.ElementRef<typeof Button>,
