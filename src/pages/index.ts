@@ -9,5 +9,6 @@ export * from "./not-found";
 export * from "./password-input";
 export * from "./one-to-one-relationship";
 export * from "./place-picker";
+export * from "./range-slider";
 export * from "./search-address";
 export * from "./time-picker";

@@ -26,7 +26,10 @@ type ComboboxItem = Record<"value" | "label", string>;
 
 type ComboboxValue = string;
 
-type ComboboxWrapperProps = React.ComponentPropsWithoutRef<typeof Button> & {
+type ComboboxWrapperProps = Omit<
+  React.ComponentPropsWithoutRef<typeof Button>,
+  "value" | "onChange"
+> & {
   value: ComboboxValue | null;
   onChange: (value: ComboboxValue | null) => void;
   placeholder?: string;

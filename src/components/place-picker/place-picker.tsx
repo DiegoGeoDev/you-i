@@ -26,7 +26,10 @@ import {
 
 type PlacePickerValue = [number, number];
 
-type PlacePickerWrapperProps = React.ComponentPropsWithoutRef<typeof Button> & {
+type PlacePickerWrapperProps = Omit<
+  React.ComponentPropsWithoutRef<typeof Button>,
+  "value" | "onChange"
+> & {
   value: PlacePickerValue | null;
   onChange: (value: PlacePickerValue | null) => void;
   placeholder?: string;

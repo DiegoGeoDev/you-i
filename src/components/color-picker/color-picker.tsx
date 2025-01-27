@@ -30,7 +30,10 @@ const allowedKeys = [
 
 type ColorPickerValue = string;
 
-type ColorPickerWrapperProps = React.ComponentPropsWithoutRef<typeof Button> & {
+type ColorPickerWrapperProps = Omit<
+  React.ComponentPropsWithoutRef<typeof Button>,
+  "value" | "onChange"
+> & {
   value: ColorPickerValue | null;
   onChange: (value: ColorPickerValue | null) => void;
   placeholder?: string;

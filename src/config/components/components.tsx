@@ -60,6 +60,11 @@ const componentsConfig: ComponentsConfig[] = [
     to: "/copy-to-clipboard",
     title: "Copy To Clipboard",
   },
+  {
+    id: self.crypto.randomUUID(),
+    to: "/range-slider",
+    title: "Range Slider",
+  },
 ];
 
 export { componentsConfig, type ComponentsConfig };

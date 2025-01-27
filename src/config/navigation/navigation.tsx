@@ -13,6 +13,7 @@ import {
   SearchAddress,
   ColorPicker,
   CopyToClipboard,
+  RangeSlider,
 } from "@/pages";
 
 const iconSize = 20;
@@ -187,6 +188,19 @@ const navigationConfig: NavigationConfig[] = [
         page: <CopyToClipboard />,
         isNavigationItem: false,
         pathTest: /^\/copy\-to\-clipboard$/,
+      },
+    ],
+  },
+  {
+    id: self.crypto.randomUUID(),
+    data: [
+      {
+        id: self.crypto.randomUUID(),
+        path: "/range-slider",
+        title: "Range Slider",
+        page: <RangeSlider />,
+        isNavigationItem: false,
+        pathTest: /^\/range\-slider$/,
       },
     ],
   },

@@ -50,8 +50,9 @@ type SearchAddressValue = {
   y: number;
 };
 
-type SearchAddressWrapperProps = React.ComponentPropsWithoutRef<
-  typeof Button
+type SearchAddressWrapperProps = Omit<
+  React.ComponentPropsWithoutRef<typeof Button>,
+  "value" | "onChange"
 > & {
   value: SearchAddressValue | null;
   onChange: (value: SearchAddressValue | null) => void;
