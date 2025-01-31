@@ -10,6 +10,7 @@ import { DrawEvent as OlDrawEvent } from "ol/interaction/Draw";
 import { ModifyEvent as OlModifyEvent } from "ol/interaction/Modify";
 import { Point as OlPoint } from "ol/geom";
 import { Feature as OlFeature } from "ol";
+import { buffer, Extent as OlExtent } from "ol/extent";
 
 import {
   DrawSinglePointValue,
@@ -27,7 +28,7 @@ class SinglePointEditor {
   constructor(
     private map: OlMap,
     private pointOptions: DrawSinglePointOptions,
-    private drawOptions?: DrawSinglePointDrawOptions,
+    private drawOptions?: DrawSinglePointDrawOptions
   ) {
     this.map = map;
 
@@ -55,10 +56,10 @@ class SinglePointEditor {
   }
 
   public clearVectorSource(
-    onChange: (value: DrawSinglePointValue | undefined) => void,
+    onChange: (value: DrawSinglePointValue | null) => void
   ) {
     this.vectorSource.clear();
-    onChange(undefined);
+    onChange(null);
   }
 
   public removeVectorLayer() {
@@ -68,8 +69,8 @@ class SinglePointEditor {
 
   public enableDrawing(
     isModify: boolean,
-    onChange: (value: DrawSinglePointValue | undefined) => void,
-    onAbortDrawing: () => void,
+    onChange: (value: DrawSinglePointValue | null) => void,
+    onAbortDrawing: () => void
   ) {
     if (isModify) {
       this.map.addInteraction(this.modify);
@@ -120,6 +121,12 @@ class SinglePointEditor {
     });
 
     this.vectorSource.addFeature(feature);
+  }
+
+  public zoomToVectorLayer() {
+    this.map
+      .getView()
+      .fit(buffer(this.vectorSource.getExtent() as OlExtent, 1000));
   }
 }
 

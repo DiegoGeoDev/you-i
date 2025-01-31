@@ -10,6 +10,7 @@ import { DrawEvent as OlDrawEvent } from "ol/interaction/Draw";
 import { ModifyEvent as OlModifyEvent } from "ol/interaction/Modify";
 import { Polygon as OlPolygon } from "ol/geom";
 import { Feature as OlFeature } from "ol";
+import { buffer, Extent as OlExtent } from "ol/extent";
 
 import {
   DrawSinglePolygonValue,
@@ -27,7 +28,7 @@ class SinglePolygonEditor {
   constructor(
     private map: OlMap,
     private polygonOptions: DrawSinglePolygonOptions,
-    private drawOptions?: DrawSinglePolygonDrawOptions,
+    private drawOptions?: DrawSinglePolygonDrawOptions
   ) {
     this.map = map;
 
@@ -55,10 +56,10 @@ class SinglePolygonEditor {
   }
 
   public clearVectorSource(
-    onChange: (value: DrawSinglePolygonValue | undefined) => void,
+    onChange: (value: DrawSinglePolygonValue | null) => void
   ) {
     this.vectorSource.clear();
-    onChange(undefined);
+    onChange(null);
   }
 
   public removeVectorLayer() {
@@ -68,8 +69,8 @@ class SinglePolygonEditor {
 
   public enableDrawing(
     isModify: boolean,
-    onChange: (value: DrawSinglePolygonValue | undefined) => void,
-    onAbortDrawing: () => void,
+    onChange: (value: DrawSinglePolygonValue | null) => void,
+    onAbortDrawing: () => void
   ) {
     if (isModify) {
       this.map.addInteraction(this.modify);
@@ -120,6 +121,12 @@ class SinglePolygonEditor {
     });
 
     this.vectorSource.addFeature(feature);
+  }
+
+  public zoomToVectorLayer() {
+    this.map
+      .getView()
+      .fit(buffer(this.vectorSource.getExtent() as OlExtent, 1000));
   }
 }
 

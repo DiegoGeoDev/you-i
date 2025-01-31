@@ -7,8 +7,16 @@ import {
   PlacePicker,
   DrawSinglePoint,
   DrawSinglePolygon,
-  InputNumber,
+  NumberInput,
+  PasswordInput,
   Combobox,
+  SearchAddress,
+  ColorPicker,
+  CopyToClipboard,
+  RangeSlider,
+  PlacePickerAdvanced,
+  DrawSingleLineString,
+  Osrm,
 } from "@/pages";
 
 const iconSize = 20;
@@ -100,6 +108,19 @@ const navigationConfig: NavigationConfig[] = [
     data: [
       {
         id: self.crypto.randomUUID(),
+        path: "/draw-single-line-string",
+        title: "Draw Single Line String",
+        page: <DrawSingleLineString />,
+        isNavigationItem: false,
+        pathTest: /^\/draw\-single\-line\-string$/,
+      },
+    ],
+  },
+  {
+    id: self.crypto.randomUUID(),
+    data: [
+      {
+        id: self.crypto.randomUUID(),
         path: "/draw-single-polygon",
         title: "Draw Single Polygon",
         page: <DrawSinglePolygon />,
@@ -113,11 +134,24 @@ const navigationConfig: NavigationConfig[] = [
     data: [
       {
         id: self.crypto.randomUUID(),
-        path: "/input-number",
-        title: "Input Number",
-        page: <InputNumber />,
+        path: "/number-input",
+        title: "Number Input",
+        page: <NumberInput />,
         isNavigationItem: false,
-        pathTest: /^\/input\-number$/,
+        pathTest: /^\/number\-input$/,
+      },
+    ],
+  },
+  {
+    id: self.crypto.randomUUID(),
+    data: [
+      {
+        id: self.crypto.randomUUID(),
+        path: "/password-input",
+        title: "Password Input",
+        page: <PasswordInput />,
+        isNavigationItem: false,
+        pathTest: /^\/password\-input$/,
       },
     ],
   },
@@ -131,6 +165,84 @@ const navigationConfig: NavigationConfig[] = [
         page: <Combobox />,
         isNavigationItem: false,
         pathTest: /^\/combobox$/,
+      },
+    ],
+  },
+  {
+    id: self.crypto.randomUUID(),
+    data: [
+      {
+        id: self.crypto.randomUUID(),
+        path: "/search-address",
+        title: "Search Address",
+        page: <SearchAddress />,
+        isNavigationItem: false,
+        pathTest: /^\/search\-address$/,
+      },
+    ],
+  },
+  {
+    id: self.crypto.randomUUID(),
+    data: [
+      {
+        id: self.crypto.randomUUID(),
+        path: "/color-picker",
+        title: "Color Picker",
+        page: <ColorPicker />,
+        isNavigationItem: false,
+        pathTest: /^\/color\-picker$/,
+      },
+    ],
+  },
+  {
+    id: self.crypto.randomUUID(),
+    data: [
+      {
+        id: self.crypto.randomUUID(),
+        path: "/copy-to-clipboard",
+        title: "Copy To Clipboard",
+        page: <CopyToClipboard />,
+        isNavigationItem: false,
+        pathTest: /^\/copy\-to\-clipboard$/,
+      },
+    ],
+  },
+  {
+    id: self.crypto.randomUUID(),
+    data: [
+      {
+        id: self.crypto.randomUUID(),
+        path: "/range-slider",
+        title: "Range Slider",
+        page: <RangeSlider />,
+        isNavigationItem: false,
+        pathTest: /^\/range\-slider$/,
+      },
+    ],
+  },
+  {
+    id: self.crypto.randomUUID(),
+    data: [
+      {
+        id: self.crypto.randomUUID(),
+        path: "/place-picker-advanced",
+        title: "Place Picker Advanced",
+        page: <PlacePickerAdvanced />,
+        isNavigationItem: false,
+        pathTest: /^\/place\-picker\-advanced$/,
+      },
+    ],
+  },
+  {
+    id: self.crypto.randomUUID(),
+    data: [
+      {
+        id: self.crypto.randomUUID(),
+        path: "/osrm",
+        title: "OSRM",
+        page: <Osrm />,
+        isNavigationItem: false,
+        pathTest: /^\/osrm$/,
       },
     ],
   },

@@ -3,14 +3,12 @@ import { createContext, useContext } from "react";
 import { TimePickerValue } from "../time-picker";
 
 type ComponentContextType = {
-  value: TimePickerValue | undefined;
-  onChange: (value: TimePickerValue | undefined) => void;
+  value: TimePickerValue | null;
+  onChange: (value: TimePickerValue | null) => void;
   disabled?: boolean;
 };
 
-const ComponentContext = createContext<ComponentContextType | undefined>(
-  undefined
-);
+const ComponentContext = createContext<ComponentContextType | null>(null);
 
 function useComponentContext() {
   const context = useContext(ComponentContext);

@@ -3,15 +3,13 @@ import { createContext, useContext } from "react";
 import { PlacePickerValue } from "../place-picker";
 
 type ComponentContextType = {
-  value: PlacePickerValue | undefined;
-  onChange: (value: PlacePickerValue | undefined) => void;
+  value: PlacePickerValue | null;
+  onChange: (value: PlacePickerValue | null) => void;
   disabled?: boolean;
   mapId: string;
 };
 
-const ComponentContext = createContext<ComponentContextType | undefined>(
-  undefined
-);
+const ComponentContext = createContext<ComponentContextType | null>(null);
 
 function useComponentContext() {
   const context = useContext(ComponentContext);

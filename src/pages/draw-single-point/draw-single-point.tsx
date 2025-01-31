@@ -24,7 +24,7 @@ import { useToast } from "@/hooks/use-toast";
 import { pointStyle, drawStyle } from "./ol-styles";
 
 const formSchema = z.object({
-  singlePoint: z.tuple([z.number(), z.number()]).optional(),
+  singlePoint: z.tuple([z.number(), z.number()]).nullable(),
 });
 
 const mapId = "draw-single-point";
@@ -41,7 +41,7 @@ function DrawSinglePoint() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      // singlePoint: undefined,
+      // singlePoint: null,
       singlePoint: [-41.19758412569701, -16.26055046355725],
     },
   });
@@ -75,7 +75,7 @@ function DrawSinglePoint() {
               <TileLayer source={openStreetMap} zIndex={0} />
               <DrawSinglePointWrapper
                 className="absolute inset-4 z-10 h-min w-min"
-                value={undefined}
+                value={null}
                 onChange={() => {}}
                 disabled={isActive}
                 pointOptions={{
@@ -122,7 +122,25 @@ function DrawSinglePoint() {
                 />
               </div>
 
-              <Button type="submit">Submit</Button>
+              <span className="flex gap-4">
+                <Button
+                  type="button"
+                  onClick={() => form.reset({ singlePoint: null })}
+                  disabled
+                >
+                  reset
+                </Button>
+
+                <Button
+                  type="button"
+                  onClick={() => form.setValue("singlePoint", [-45, -23])}
+                  disabled
+                >
+                  setValue
+                </Button>
+
+                <Button type="submit">Submit</Button>
+              </span>
 
               <span className="block text-muted-foreground w-80">
                 {singlePointWatch === undefined

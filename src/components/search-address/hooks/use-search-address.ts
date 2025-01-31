@@ -1,34 +1,44 @@
 import { useState, useCallback, useEffect } from "react";
-import { SearchAddressResult } from "../search-address";
+
 import { useDebounce } from "@/hooks/use-debounce";
+
+import { SearchAddressValue, SearchOptions } from "../search-address";
 
 type UseSearchAddressResult = {
   query: string;
-  results: Record<string, SearchAddressResult[]>;
+  results: Record<string, SearchAddressValue[]>;
   loading: boolean;
   handleSearch: (value: string) => void;
-  selectedItem: SearchAddressResult | null;
-  setSelectedItem: (item: SearchAddressResult | null) => void;
 };
 
-const useSearchAddress = (): UseSearchAddressResult => {
+type useSearchAddressType = {
+  searchOptions: SearchOptions | undefined;
+};
+
+const useSearchAddress = ({
+  searchOptions = {
+    headers: {
+      "Accept-Language": "pt-BR",
+    },
+  },
+}: useSearchAddressType): UseSearchAddressResult => {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<Record<string, SearchAddressResult[]>>(
+  const [results, setResults] = useState<Record<string, SearchAddressValue[]>>(
     {}
   );
   const [loading, setLoading] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<SearchAddressResult | null>(
-    null
-  );
 
   const debouncedQuery = useDebounce(query, 500);
 
   const groupByType = useCallback(
-    (data: any[]): Record<string, SearchAddressResult[]> => {
+    (data: any[]): Record<string, SearchAddressValue[]> => {
       return data.reduce((acc, item) => {
-        const { address, display_name, type, lat, lon } = item;
+        const { osm_id, address, display_name, type, lat, lon } = item;
 
-        const currentItem: SearchAddressResult = {
+        console.log(item);
+
+        const currentItem: SearchAddressValue = {
+          osm_id,
           address: {
             city: address?.city,
             city_district: address?.city_district,
@@ -51,7 +61,7 @@ const useSearchAddress = (): UseSearchAddressResult => {
         }
 
         const alreadyExists = acc[type].some(
-          (item: SearchAddressResult) => item.display_name === display_name
+          (item: SearchAddressValue) => item.display_name === display_name
         );
 
         if (!alreadyExists) {
@@ -59,7 +69,7 @@ const useSearchAddress = (): UseSearchAddressResult => {
         }
 
         return acc;
-      }, {} as Record<string, SearchAddressResult[]>);
+      }, {} as Record<string, SearchAddressValue[]>);
     },
     []
   );
@@ -77,9 +87,7 @@ const useSearchAddress = (): UseSearchAddressResult => {
           debouncedQuery
         )}&format=json&addressdetails=1&limit=5`;
         const response = await fetch(url, {
-          headers: {
-            "Accept-Language": "pt-BR",
-          },
+          ...searchOptions,
         });
         const data = await response.json();
 
@@ -99,8 +107,6 @@ const useSearchAddress = (): UseSearchAddressResult => {
     results,
     loading,
     handleSearch,
-    selectedItem,
-    setSelectedItem,
   };
 };
 

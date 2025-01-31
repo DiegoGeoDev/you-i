@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
+import { ListComponent } from "@/components/list-component";
+
 import { cn } from "@/lib/utils";
 
 import { ComponentContext, useComponentContext } from "./hooks";
@@ -24,10 +26,12 @@ type ComboboxItem = Record<"value" | "label", string>;
 
 type ComboboxValue = string;
 
-type ComboboxWrapperProps = React.HTMLAttributes<HTMLButtonElement> & {
-  value: ComboboxValue | undefined;
-  onChange: (value: ComboboxValue | undefined) => void;
-  disabled?: boolean;
+type ComboboxWrapperProps = Omit<
+  React.ComponentPropsWithoutRef<typeof Button>,
+  "value" | "onChange"
+> & {
+  value: ComboboxValue | null;
+  onChange: (value: ComboboxValue | null) => void;
   placeholder?: string;
   items: ComboboxItem[];
 };
@@ -49,41 +53,32 @@ const ComboboxWrapper = React.forwardRef<
     },
     ref
   ) => {
-    const [open, setOpen] = useState(false);
-
-    // innerValue to work with defaultValues (react-hook-form)
-    const [innerValue, setInnerValue] = useState(value);
-
-    function _onChange(value: ComboboxValue | undefined) {
-      onChange(value);
-      setInnerValue(value);
-    }
+    const [open, setOpen] = React.useState(false);
 
     return (
-      <ComponentContext.Provider
-        value={{ value: innerValue, onChange: _onChange, items }}
-      >
+      <ComponentContext.Provider value={{ value, onChange, items }}>
         <Popover open={open} onOpenChange={setOpen}>
-          <PopoverTrigger asChild>
+          <PopoverTrigger asChild disabled={disabled}>
             <Button
               ref={ref}
               type="button"
               variant="outline"
-              disabled={disabled}
               aria-expanded={open}
-              data-is-undefined={innerValue === undefined}
+              data-is-null={value === null}
               className={cn(
                 `
-                w-full justify-between font-normal 
-                data-[is-undefined=true]:text-muted-foreground
+                w-full justify-between truncate font-normal 
+                data-[is-null=true]:text-muted-foreground
                 `,
                 className
               )}
               {...props}
             >
-              {innerValue
-                ? items.find((item) => item.value === innerValue)?.label
-                : placeholder}
+              <p className="truncate">
+                {value
+                  ? items.find((item) => item.value === value)?.label
+                  : placeholder}
+              </p>
               <ChevronsUpDown className="ml-2" size="16" />
             </Button>
           </PopoverTrigger>
@@ -124,37 +119,51 @@ type ComboboxCommandProps = React.ComponentPropsWithoutRef<typeof Command> & {
 const ComboboxCommand = React.forwardRef<
   React.ElementRef<typeof Command>,
   ComboboxCommandProps
->(({ placeholder, emptyText, className, children, ...props }, ref) => {
-  const { value, onChange, items } = useComponentContext();
+>(
+  (
+    {
+      placeholder = "Type to search",
+      emptyText = "No results found",
+      className,
+      children,
+      ...props
+    },
+    ref
+  ) => {
+    const { value, onChange, items } = useComponentContext();
 
-  return (
-    <Command ref={ref} {...props}>
-      <CommandInput placeholder={placeholder} />
-      <CommandList>
-        <CommandEmpty>{emptyText}</CommandEmpty>
-        <CommandGroup>
-          {items.map((item) => (
-            <CommandItem
-              key={item.value}
-              value={item.value}
-              onSelect={(currentValue) => {
-                onChange(currentValue === value ? "" : currentValue);
-              }}
-            >
-              <Check
-                className={cn(
-                  "mr-2 h-4 w-4",
-                  value === item.value ? "opacity-100" : "opacity-0"
-                )}
-              />
-              {item.label}
-            </CommandItem>
-          ))}
-        </CommandGroup>
-      </CommandList>
-    </Command>
-  );
-});
+    return (
+      <Command ref={ref} className={cn(className)} {...props}>
+        <CommandInput placeholder={placeholder} />
+        <CommandList>
+          <CommandEmpty>{emptyText}</CommandEmpty>
+          <CommandGroup>
+            <ListComponent
+              data={items || []}
+              renderItem={(item) => (
+                <CommandItem
+                  key={item.value}
+                  value={item.value}
+                  onSelect={(currentValue) => {
+                    onChange(currentValue === value ? null : currentValue);
+                  }}
+                >
+                  <Check
+                    className={cn(
+                      "mr-2 h-4 w-4",
+                      value === item.value ? "opacity-100" : "opacity-0"
+                    )}
+                  />
+                  {item.label}
+                </CommandItem>
+              )}
+            />
+          </CommandGroup>
+        </CommandList>
+      </Command>
+    );
+  }
+);
 ComboboxCommand.displayName = "ComboboxCommand";
 
 export { type ComboboxValue, type ComboboxItem };

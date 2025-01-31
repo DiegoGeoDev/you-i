@@ -3,14 +3,12 @@ import { createContext, useContext } from "react";
 import { OneToOneRelationshipValue } from "../one-to-one-relationship";
 
 type ComponentContextType = {
-  value: OneToOneRelationshipValue[] | undefined;
-  onChange: (value: OneToOneRelationshipValue[] | undefined) => void;
+  value: OneToOneRelationshipValue[] | null;
+  onChange: (value: OneToOneRelationshipValue[] | null) => void;
   disabled?: boolean;
 };
 
-const ComponentContext = createContext<ComponentContextType | undefined>(
-  undefined
-);
+const ComponentContext = createContext<ComponentContextType | null>(null);
 
 function useComponentContext() {
   const context = useContext(ComponentContext);

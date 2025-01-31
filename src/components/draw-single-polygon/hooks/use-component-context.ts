@@ -3,14 +3,12 @@ import { createContext, useContext } from "react";
 import { DrawSinglePolygonValue } from "../draw-single-polygon";
 
 type ComponentContextType = {
-  value: DrawSinglePolygonValue | undefined;
-  onChange: (value: DrawSinglePolygonValue | undefined) => void;
+  value: DrawSinglePolygonValue | null;
+  onChange: (value: DrawSinglePolygonValue | null) => void;
   disabled?: boolean;
 };
 
-const ComponentContext = createContext<ComponentContextType | undefined>(
-  undefined
-);
+const ComponentContext = createContext<ComponentContextType | null>(null);
 
 function useComponentContext() {
   const context = useContext(ComponentContext);

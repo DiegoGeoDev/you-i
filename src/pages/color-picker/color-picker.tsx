@@ -6,33 +6,37 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 
-import { InputNumber as InputNumberComponent } from "@/components";
+import {
+  ColorPickerWrapper,
+  ColorPickerContent,
+  ColorPicker as ColorPickerComponent,
+  ColorPickerInput,
+} from "@/components";
 
 import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
-  number: z.string().optional(),
+  color: z.string().nullable(),
 });
 
-function InputNumber() {
+function ColorPicker() {
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      // number: undefined,
-      number: "10",
+      color: null,
+      // color: "",
     },
   });
 
-  const numberWatch = form.watch("number");
+  const colorWatch = form.watch("color");
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
     toast({
       title: "onSubmit",
-      description:
-        values.number === undefined ? "undefined" : JSON.stringify(values),
+      description: values.color === null ? "null" : JSON.stringify(values),
     });
   }
 
@@ -54,25 +58,42 @@ function InputNumber() {
             className="space-y-2"
           >
             <div className="space-y-2">
-              <Label>Number</Label>
+              <Label>Color</Label>
               <Controller
                 control={form.control}
-                name="number"
+                name="color"
                 render={({ field }) => (
-                  <InputNumberComponent
+                  <ColorPickerWrapper
                     value={field.value}
                     onChange={field.onChange}
-                  />
+                    // disabled
+                  >
+                    <ColorPickerContent>
+                      <ColorPickerComponent />
+                      <ColorPickerInput />
+                    </ColorPickerContent>
+                  </ColorPickerWrapper>
                 )}
               />
             </div>
 
-            <Button type="submit">Submit</Button>
+            <span className="flex gap-4">
+              <Button type="button" onClick={() => form.reset({ color: null })}>
+                reset
+              </Button>
+
+              <Button
+                type="button"
+                onClick={() => form.setValue("color", "#fff")}
+              >
+                setValue
+              </Button>
+
+              <Button type="submit">Submit</Button>
+            </span>
 
             <span className="block text-muted-foreground w-80">
-              {numberWatch === undefined
-                ? "undefined"
-                : JSON.stringify(numberWatch)}
+              {colorWatch === null ? "null" : JSON.stringify(colorWatch)}
             </span>
           </form>
         </div>
@@ -81,4 +102,4 @@ function InputNumber() {
   );
 }
 
-export { InputNumber };
+export { ColorPicker };

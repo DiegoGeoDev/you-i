@@ -17,7 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import { items } from "./mock";
 
 const formSchema = z.object({
-  combobox: z.string().optional(),
+  combobox: z.string().nullable(),
 });
 
 function Combobox() {
@@ -26,8 +26,8 @@ function Combobox() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      combobox: undefined,
-      // combobox: "input 4",
+      // combobox: null,
+      combobox: "input 4",
     },
   });
 
@@ -79,7 +79,23 @@ function Combobox() {
               />
             </div>
 
-            <Button type="submit">Submit</Button>
+            <span className="flex gap-4">
+              <Button
+                type="button"
+                onClick={() => form.reset({ combobox: null })}
+              >
+                reset
+              </Button>
+
+              <Button
+                type="button"
+                onClick={() => form.setValue("combobox", "input 2")}
+              >
+                setValue
+              </Button>
+
+              <Button type="submit">Submit</Button>
+            </span>
 
             <span className="block text-muted-foreground w-80">
               {comboboxWatch === undefined
