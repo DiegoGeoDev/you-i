@@ -35,8 +35,6 @@ const useSearchAddress = ({
       return data.reduce((acc, item) => {
         const { osm_id, address, display_name, type, lat, lon } = item;
 
-        console.log(item);
-
         const currentItem: SearchAddressValue = {
           osm_id,
           address: {

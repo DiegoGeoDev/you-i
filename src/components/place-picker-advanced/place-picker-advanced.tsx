@@ -14,6 +14,7 @@ import { ListComponent } from "@/components/list-component";
 import {
   ComboboxCommand,
   ComboboxContent,
+  ComboboxItem,
   ComboboxWrapper,
   SearchAddressCommand,
   SearchAddressContent,
@@ -24,13 +25,24 @@ import { useMap } from "@/components/map";
 
 import { cn } from "@/lib/utils";
 
-import { ComponentContext, useComponentContext } from "./hooks";
+import {
+  ComponentContext,
+  useComponentContext,
+  usePlacePickerAdvancedAddress,
+  usePlacePickerAdvancedMapPoint,
+  usePlacePickerAdvancedPlace,
+} from "./hooks";
 import { PlacePickerAdvancedPoint as PlacePickerAdvancedPointClass } from "./utils";
 
 type NonEmptyArray<T> = [T, ...T[]];
 
 const placeTypeValues = ["MapPoint", "Address", "Place"] as const;
 type PlaceType = (typeof placeTypeValues)[number];
+
+type PlaceItem = ComboboxItem & {
+  x: number;
+  y: number;
+};
 
 type PointStyle = OlStyle | OlStyle[] | OlStyleFunction;
 type PlacePickerAdvancedPointOptions = {
@@ -101,11 +113,20 @@ const PlacePickerAdvancedWrapper = React.forwardRef<
         return component;
       });
 
+    const handleClear = () => {
+      onChange(null);
+    };
+
     const handleSelectedComponent = (placeType: PlaceType) => {
       const component = childArray.find(
         (child) => child.props.placeType === placeType
       );
-      setSelectedComponent(component);
+
+      // @ts-ignore
+      if (component?.props.placeType !== selectedComponent?.props.placeType) {
+        handleClear();
+        setSelectedComponent(component);
+      }
     };
 
     return (
@@ -164,13 +185,31 @@ PlacePickerAdvancedWrapper.displayName = "PlacePickerAdvancedWrapper";
 type PlacePickerAdvancedMapPointProps = {
   placeType: "MapPoint";
   placeholder?: string;
+  toastOptions?: PlacePickerAdvancedToastOptions;
+  isActive?: boolean;
+  handleActiveChange?: (isActive: boolean) => void;
 };
 
 const PlacePickerAdvancedMapPoint = ({
   placeType,
   placeholder = "Adicionar manualmente",
+  toastOptions,
+  isActive,
+  handleActiveChange,
 }: PlacePickerAdvancedMapPointProps) => {
-  const { value, disabled } = useComponentContext();
+  const { disabled } = useComponentContext();
+  const {
+    mapPoint,
+    handleMapPoint,
+    isActive: _isActive,
+  } = usePlacePickerAdvancedMapPoint(
+    placeType,
+    toastOptions,
+    isActive,
+    handleActiveChange
+  );
+
+  const isDisabled = disabled || _isActive;
 
   return (
     <Button
@@ -181,12 +220,12 @@ const PlacePickerAdvancedMapPoint = ({
         "data-[is-null=true]:text-muted-foreground",
         "data-[is-disabled=true]:text-muted-foreground"
       )}
-      onClick={() => {}}
-      disabled={disabled}
-      data-is-null={value === null}
+      onClick={handleMapPoint}
+      disabled={isDisabled}
+      data-is-null={mapPoint === null}
     >
-      {value !== null
-        ? `X: ${value.x.toFixed(6)}, Y: ${value.y.toFixed(6)}`
+      {mapPoint !== null
+        ? `X: ${mapPoint.x.toFixed(6)}, Y: ${mapPoint.y.toFixed(6)}`
         : placeholder}
     </Button>
   );
@@ -201,12 +240,13 @@ const PlacePickerAdvancedAddress = ({
   placeType,
   placeholder = "Pesquisar por um endereço",
 }: PlacePickerAdvancedAddressProps) => {
-  const { value, disabled } = useComponentContext();
+  const { disabled } = useComponentContext();
+  const { address, handleAddress } = usePlacePickerAdvancedAddress(placeType);
 
   return (
     <SearchAddressWrapper
-      value={null}
-      onChange={() => {}}
+      value={address}
+      onChange={handleAddress}
       placeholder={placeholder}
       disabled={disabled}
     >
@@ -223,19 +263,22 @@ const PlacePickerAdvancedAddress = ({
 type PlacePickerAdvancedPlaceProps = {
   placeType: "Place";
   placeholder?: string;
+  items: PlaceItem[];
 };
 
 const PlacePickerAdvancedPlace = ({
   placeType,
   placeholder = "Selecionar um local predefinido",
+  items,
 }: PlacePickerAdvancedPlaceProps) => {
-  const { value, disabled } = useComponentContext();
+  const { disabled } = useComponentContext();
+  const { place, handlePlace } = usePlacePickerAdvancedPlace(items, placeType);
 
   return (
     <ComboboxWrapper
-      value={null}
-      onChange={() => {}}
-      items={[]}
+      value={place}
+      onChange={handlePlace}
+      items={items}
       placeholder={placeholder}
       disabled={disabled}
     >
@@ -290,9 +333,11 @@ const PlacePickerAdvancedPoint = ({
   return null;
 };
 
+export { placeTypeValues };
 export {
   type NonEmptyArray,
   type PlaceType,
+  type PlaceItem,
   type PlacePickerAdvancedValue,
   type PlacePickerAdvancedPointOptions,
   type PlacePickerAdvancedToastOptions,

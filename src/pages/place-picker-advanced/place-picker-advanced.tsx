@@ -18,6 +18,7 @@ import {
   PlacePickerAdvancedMapPoint,
   PlacePickerAdvancedPlace,
   PlacePickerAdvancedWrapper,
+  placeTypeValues,
 } from "@/components";
 
 import { useToast } from "@/hooks/use-toast";
@@ -25,7 +26,24 @@ import { useToast } from "@/hooks/use-toast";
 import { items } from "./mock";
 
 const formSchema = z.object({
-  place: z.tuple([z.number(), z.number()]).nullable(),
+  place: z
+    .object({
+      placeID: z.string().optional(),
+      address: z
+        .object({
+          district: z.string().optional(),
+          city: z.string().optional(),
+          state: z.string().optional(),
+          country: z.string().optional(),
+          zipCode: z.string().optional(),
+        })
+        .optional(),
+      label: z.string().optional(),
+      x: z.number(),
+      y: z.number(),
+      placeType: z.enum(placeTypeValues),
+    })
+    .nullable(),
 });
 
 const mapId = "place-picker-advanced-point";
@@ -76,56 +94,49 @@ function PlacePickerAdvanced() {
             >
               <div className="space-y-2">
                 <Label>Place</Label>
-                <PlacePickerAdvancedWrapper
-                  value={null}
-                  onChange={() => console.log(123)}
-                  pointOptions={{
-                    zIndex: 1,
-                  }}
-                >
-                  <PlacePickerAdvancedMapPoint
-                    placeType="MapPoint"
-                    placeholder="Adicionar manualmente"
-                  />
-                  <PlacePickerAdvancedAddress
-                    placeType="Address"
-                    placeholder="Pesquisar por um endereço"
-                  />
-                  <PlacePickerAdvancedPlace
-                    placeType="Place"
-                    placeholder="Selecionar um local predefinido"
-                  />
-                </PlacePickerAdvancedWrapper>
-                {/* <Controller
-                control={form.control}
-                name="place"
-                render={({ field }) => (
-                  <PlacePickerWrapper
-                    value={field.value}
-                    onChange={field.onChange}
-                    mapId="unique-identifier"
-                    placeholder="Escolha um local"
-                    // disabled
-                  >
-                    <PlacePickerContent>
-                      <PlacePickerMap pointStyle={pointStyle} />
-                    </PlacePickerContent>
-                  </PlacePickerWrapper>
-                )}
-              /> */}
+
+                <Controller
+                  control={form.control}
+                  name="place"
+                  render={({ field }) => (
+                    <PlacePickerAdvancedWrapper
+                      value={field.value}
+                      onChange={field.onChange}
+                      pointOptions={{
+                        zIndex: 1,
+                      }}
+                    >
+                      <PlacePickerAdvancedMapPoint
+                        placeType="MapPoint"
+                        placeholder="Adicionar manualmente"
+                      />
+                      <PlacePickerAdvancedAddress
+                        placeType="Address"
+                        placeholder="Pesquisar por um endereço"
+                      />
+                      <PlacePickerAdvancedPlace
+                        placeType="Place"
+                        placeholder="Selecionar um local predefinido"
+                        items={items}
+                      />
+                    </PlacePickerAdvancedWrapper>
+                  )}
+                />
               </div>
 
               <span className="flex gap-4">
                 <Button
                   type="button"
                   onClick={() => form.reset({ place: null })}
+                  disabled
                 >
                   reset
                 </Button>
 
                 <Button
                   type="button"
-                  onClick={() => form.setValue("place", [-45, -23])}
+                  onClick={() => form.setValue("place", null)}
+                  disabled
                 >
                   setValue
                 </Button>
