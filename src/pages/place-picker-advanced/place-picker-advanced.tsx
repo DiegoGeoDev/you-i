@@ -13,12 +13,16 @@ import {
   TileLayer,
 } from "@/components/map/components";
 
-import { PlacePickerAdvanced as PlacePickerAdvancedComponent } from "@/components";
+import {
+  PlacePickerAdvancedAddress,
+  PlacePickerAdvancedMapPoint,
+  PlacePickerAdvancedPlace,
+  PlacePickerAdvancedWrapper,
+} from "@/components";
 
 import { useToast } from "@/hooks/use-toast";
 
 import { items } from "./mock";
-import { pointStyle } from "./point-style";
 
 const formSchema = z.object({
   place: z.tuple([z.number(), z.number()]).nullable(),
@@ -72,12 +76,26 @@ function PlacePickerAdvanced() {
             >
               <div className="space-y-2">
                 <Label>Place</Label>
-                <PlacePickerAdvancedComponent
+                <PlacePickerAdvancedWrapper
                   value={null}
                   onChange={() => console.log(123)}
-                  mapId="unique-identifier"
-                  placeTypes={["MapPoint", "Address", "Place"]}
-                />
+                  pointOptions={{
+                    zIndex: 1,
+                  }}
+                >
+                  <PlacePickerAdvancedMapPoint
+                    placeType="MapPoint"
+                    placeholder="Adicionar manualmente"
+                  />
+                  <PlacePickerAdvancedAddress
+                    placeType="Address"
+                    placeholder="Pesquisar por um endereço"
+                  />
+                  <PlacePickerAdvancedPlace
+                    placeType="Place"
+                    placeholder="Selecionar um local predefinido"
+                  />
+                </PlacePickerAdvancedWrapper>
                 {/* <Controller
                 control={form.control}
                 name="place"

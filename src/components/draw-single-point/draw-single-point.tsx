@@ -75,7 +75,7 @@ const DrawSinglePointWrapper = React.forwardRef<
         >
           <div
             ref={ref}
-            className={cn("flex items-center gap-4", className)}
+            className={cn("flex items-center gap-2", className)}
             {...props}
           >
             {children}

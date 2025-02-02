@@ -1,2 +1,2 @@
 export * from "./use-component-context";
-export * from "./use-place-type";
+export * from "./use-place-picker-advanced-point";

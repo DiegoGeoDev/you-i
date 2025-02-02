@@ -75,7 +75,7 @@ const DrawSinglePolygonWrapper = React.forwardRef<
         >
           <div
             ref={ref}
-            className={cn("flex gap-4 items-center", className)}
+            className={cn("flex gap-2 items-center", className)}
             {...props}
           >
             {children}
