@@ -1,14 +1,13 @@
 import React from "react";
 
-import { useComponentContext } from "./use-component-context";
-
-import { PlacePickerAdvancedValue, PlaceType } from "../place-picker-advanced";
+import { PlacePickerAdvancedValue } from "../place-picker-advanced";
 
 import { SearchAddressValue } from "@/components";
 
-function usePlacePickerAdvancedAddress(placeType: PlaceType) {
-  const { value, onChange } = useComponentContext();
-
+function usePlacePickerAdvancedAddress(
+  value: PlacePickerAdvancedValue | null,
+  onChange: (value: PlacePickerAdvancedValue | null) => void
+) {
   const [address, setAddress] = React.useState<SearchAddressValue | null>(
     () => {
       if (value?.label !== undefined) {
@@ -36,11 +35,6 @@ function usePlacePickerAdvancedAddress(placeType: PlaceType) {
     }
   );
 
-  // Clear state  on component dismount
-  React.useEffect(() => {
-    return () => setAddress(null);
-  }, []);
-
   function handleAddress(searchAddress: SearchAddressValue | null) {
     if (searchAddress === null) return;
 
@@ -61,16 +55,21 @@ function usePlacePickerAdvancedAddress(placeType: PlaceType) {
       label: searchAddress.display_name,
       x: searchAddress.x,
       y: searchAddress.y,
-      placeType,
+      placeType: "Address",
     };
 
     setAddress(searchAddress);
     onChange(newValue);
   }
 
+  function handleClearAddress() {
+    setAddress(null);
+  }
+
   return {
     address,
     handleAddress,
+    handleClearAddress,
   };
 }
 

@@ -8,24 +8,21 @@ import { Button } from "@/components/ui/button";
 
 import { useMap } from "@/components/map";
 
-import { useComponentContext } from "./use-component-context";
-
 const toastId = self.crypto.randomUUID();
 
 import {
   PlacePickerAdvancedToastOptions,
   PlacePickerAdvancedValue,
-  PlaceType,
 } from "../place-picker-advanced";
 
 function usePlacePickerAdvancedMapPoint(
-  placeType: PlaceType,
+  value: PlacePickerAdvancedValue | null,
+  onChange: (value: PlacePickerAdvancedValue | null) => void,
   toastOptions?: PlacePickerAdvancedToastOptions,
   isActive?: boolean,
   handleActiveChange?: (isActive: boolean) => void
 ) {
   const { map } = useMap();
-  const { value, onChange } = useComponentContext();
 
   const clickOnceListenerKey = React.useRef<any>();
 
@@ -42,9 +39,9 @@ function usePlacePickerAdvancedMapPoint(
   });
 
   // Clear state  on component dismount
-  React.useEffect(() => {
-    return () => setMapPoint(null);
-  }, []);
+  // React.useEffect(() => {
+  //   return () => setMapPoint(null);
+  // }, []);
 
   function cancelMapPoint() {
     unByKey(clickOnceListenerKey.current);
@@ -77,7 +74,7 @@ function usePlacePickerAdvancedMapPoint(
       label: undefined,
       x,
       y,
-      placeType,
+      placeType: "MapPoint",
     };
 
     setMapPoint({ x, y });
@@ -115,10 +112,15 @@ function usePlacePickerAdvancedMapPoint(
     });
   }
 
+  function handleClearMapPoint() {
+    setMapPoint(null);
+  }
+
   return {
     mapPoint,
     handleMapPoint,
-    isActive: isActive !== undefined ? isActive : internalIsActive,
+    internalIsActive: isActive !== undefined ? isActive : internalIsActive,
+    handleClearMapPoint,
   };
 }
 

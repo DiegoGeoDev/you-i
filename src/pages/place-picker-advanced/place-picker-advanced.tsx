@@ -54,8 +54,32 @@ function PlacePickerAdvanced() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      place: null,
-      // place: [-41.19758412569701, -16.26055046355725],
+      // place: null,
+      // place: {
+      //   address: {},
+      //   x: -51.18749463558197,
+      //   y: -12.936351130149461,
+      //   placeType: "MapPoint",
+      // },
+      place: {
+        address: {
+          district: "Região Metropolitana do Vale do Paraíba e Litoral Norte",
+          state: "São Paulo",
+          country: "Brasil",
+        },
+        label:
+          "Jacareí, Região Imediata de São José dos Campos, Região Metropolitana do Vale do Paraíba e Litoral Norte, Região Geográfica Intermediária de São José dos Campos, São Paulo, Região Sudeste, Brasil",
+        x: -45.9723075,
+        y: -23.3050682,
+        placeType: "Address",
+      },
+      // place: {
+      //   placeID: "input 1",
+      //   address: {},
+      //   x: -47.75341786770615,
+      //   y: -15.771052271331769,
+      //   placeType: "Place",
+      // },
     },
   });
 
@@ -102,6 +126,7 @@ function PlacePickerAdvanced() {
                     <PlacePickerAdvancedWrapper
                       value={field.value}
                       onChange={field.onChange}
+                      items={items}
                       pointOptions={{
                         zIndex: 1,
                       }}
@@ -117,7 +142,6 @@ function PlacePickerAdvanced() {
                       <PlacePickerAdvancedPlace
                         placeType="Place"
                         placeholder="Selecionar um local predefinido"
-                        items={items}
                       />
                     </PlacePickerAdvancedWrapper>
                   )}

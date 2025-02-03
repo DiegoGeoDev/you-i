@@ -1,18 +1,14 @@
 import React from "react";
 
-import { useComponentContext } from "./use-component-context";
-
-import {
-  PlaceItem,
-  PlacePickerAdvancedValue,
-  PlaceType,
-} from "../place-picker-advanced";
+import { PlaceItem, PlacePickerAdvancedValue } from "../place-picker-advanced";
 
 import { ComboboxValue } from "@/components";
 
-function usePlacePickerAdvancedPlace(items: PlaceItem[], placeType: PlaceType) {
-  const { value, onChange } = useComponentContext();
-
+function usePlacePickerAdvancedPlace(
+  value: PlacePickerAdvancedValue | null,
+  onChange: (value: PlacePickerAdvancedValue | null) => void,
+  items: PlaceItem[]
+) {
   const [place, setPlace] = React.useState<ComboboxValue | null>(() => {
     if (value?.placeID !== undefined) {
       return value.placeID;
@@ -21,13 +17,11 @@ function usePlacePickerAdvancedPlace(items: PlaceItem[], placeType: PlaceType) {
     return null;
   });
 
-  // Clear state  on component dismount
-  React.useEffect(() => {
-    return () => setPlace(null);
-  }, []);
-
   function handlePlace(placeID: string | null) {
-    if (placeID === null) return;
+    if (placeID === null) {
+      setPlace(null);
+      return;
+    }
 
     const place = items.find((item) => item.value === placeID);
 
@@ -43,16 +37,21 @@ function usePlacePickerAdvancedPlace(items: PlaceItem[], placeType: PlaceType) {
       label: undefined,
       x: place?.x as number,
       y: place?.y as number,
-      placeType,
+      placeType: "Place",
     };
 
     setPlace(placeID);
     onChange(newValue);
   }
 
+  function handleClearPlace() {
+    setPlace(null);
+  }
+
   return {
     place,
     handlePlace,
+    handleClearPlace,
   };
 }
 

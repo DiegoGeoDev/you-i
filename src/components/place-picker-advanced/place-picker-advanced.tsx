@@ -6,6 +6,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
@@ -77,8 +78,12 @@ type PlacePickerAdvancedWrapperProps = Omit<
   value: PlacePickerAdvancedValue | null;
   onChange: (value: PlacePickerAdvancedValue | null) => void;
   children: React.ReactElement | React.ReactElement[];
-  disabled?: boolean;
   pointOptions: PlacePickerAdvancedPointOptions;
+  disabled?: boolean;
+  items?: PlaceItem[];
+  toastOptions?: PlacePickerAdvancedToastOptions;
+  isActive?: boolean;
+  handleActiveChange?: (isActive: boolean) => void;
 };
 
 const PlacePickerAdvancedWrapper = React.forwardRef<
@@ -89,16 +94,38 @@ const PlacePickerAdvancedWrapper = React.forwardRef<
     {
       value,
       onChange,
-      disabled = false,
-      pointOptions,
-      className,
       children,
+      pointOptions,
+      disabled = false,
+      items = [],
+      toastOptions,
+      isActive,
+      handleActiveChange,
+      className,
       ...props
     },
     ref
   ) => {
     const isArray = Array.isArray(children);
     const childArray = isArray ? children : [children];
+
+    // Lifting state up for the parent to have access
+    const { mapPoint, handleMapPoint, internalIsActive, handleClearMapPoint } =
+      usePlacePickerAdvancedMapPoint(
+        value,
+        onChange,
+        toastOptions,
+        isActive,
+        handleActiveChange
+      );
+
+    // Lifting state up for the parent to have access
+    const { address, handleAddress, handleClearAddress } =
+      usePlacePickerAdvancedAddress(value, onChange);
+
+    // Lifting state up for the parent to have access
+    const { place, handlePlace, handleClearPlace } =
+      usePlacePickerAdvancedPlace(value, onChange, items);
 
     const [selectedComponent, setSelectedComponent] =
       React.useState<React.ReactNode>(() => {
@@ -114,6 +141,9 @@ const PlacePickerAdvancedWrapper = React.forwardRef<
       });
 
     const handleClear = () => {
+      handleClearMapPoint();
+      handleClearAddress();
+      handleClearPlace();
       onChange(null);
     };
 
@@ -129,29 +159,35 @@ const PlacePickerAdvancedWrapper = React.forwardRef<
       }
     };
 
+    const isDisabled = disabled || internalIsActive;
+
     return (
       <ComponentContext.Provider
         value={{
           value,
           onChange,
           disabled,
+          address,
+          handleAddress,
+          items,
+          place,
+          handlePlace,
+          mapPoint,
+          handleMapPoint,
+          isActive: internalIsActive,
         }}
       >
         <div className="flex gap-2 items-center">
           {selectedComponent}
 
           <DropdownMenu>
-            <DropdownMenuTrigger asChild disabled={disabled}>
+            <DropdownMenuTrigger asChild disabled={isDisabled}>
               <Button
                 ref={ref}
                 type="button"
                 size={"icon"}
                 variant="outline"
-                data-is-array={isArray}
-                className={cn(
-                  "w-8 h-8 p-2 rounded-full data-[is-array=false]:hidden",
-                  className
-                )}
+                className={cn("w-8 h-8 p-2 rounded-full", className)}
                 {...props}
               >
                 <EllipsisVertical size={16} />
@@ -171,6 +207,10 @@ const PlacePickerAdvancedWrapper = React.forwardRef<
                   </DropdownMenuItem>
                 )}
               />
+
+              <DropdownMenuSeparator />
+
+              <DropdownMenuItem onClick={handleClear}>Limpar</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -185,31 +225,16 @@ PlacePickerAdvancedWrapper.displayName = "PlacePickerAdvancedWrapper";
 type PlacePickerAdvancedMapPointProps = {
   placeType: "MapPoint";
   placeholder?: string;
-  toastOptions?: PlacePickerAdvancedToastOptions;
-  isActive?: boolean;
-  handleActiveChange?: (isActive: boolean) => void;
 };
 
 const PlacePickerAdvancedMapPoint = ({
-  placeType,
+  placeType: _placeType, // used only on handleSelectedComponent
   placeholder = "Adicionar manualmente",
-  toastOptions,
-  isActive,
-  handleActiveChange,
 }: PlacePickerAdvancedMapPointProps) => {
-  const { disabled } = useComponentContext();
-  const {
-    mapPoint,
-    handleMapPoint,
-    isActive: _isActive,
-  } = usePlacePickerAdvancedMapPoint(
-    placeType,
-    toastOptions,
-    isActive,
-    handleActiveChange
-  );
+  const { disabled, mapPoint, handleMapPoint, isActive } =
+    useComponentContext();
 
-  const isDisabled = disabled || _isActive;
+  const isDisabled = disabled || isActive;
 
   return (
     <Button
@@ -237,11 +262,10 @@ type PlacePickerAdvancedAddressProps = {
 };
 
 const PlacePickerAdvancedAddress = ({
-  placeType,
+  placeType: _placeType, // used only on handleSelectedComponent
   placeholder = "Pesquisar por um endereço",
 }: PlacePickerAdvancedAddressProps) => {
-  const { disabled } = useComponentContext();
-  const { address, handleAddress } = usePlacePickerAdvancedAddress(placeType);
+  const { disabled, address, handleAddress } = useComponentContext();
 
   return (
     <SearchAddressWrapper
@@ -263,16 +287,13 @@ const PlacePickerAdvancedAddress = ({
 type PlacePickerAdvancedPlaceProps = {
   placeType: "Place";
   placeholder?: string;
-  items: PlaceItem[];
 };
 
 const PlacePickerAdvancedPlace = ({
-  placeType,
+  placeType: _placeType, // used only on handleSelectedComponent
   placeholder = "Selecionar um local predefinido",
-  items,
 }: PlacePickerAdvancedPlaceProps) => {
-  const { disabled } = useComponentContext();
-  const { place, handlePlace } = usePlacePickerAdvancedPlace(items, placeType);
+  const { disabled, place, handlePlace, items } = useComponentContext();
 
   return (
     <ComboboxWrapper
