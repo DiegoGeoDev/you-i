@@ -35,8 +35,6 @@ import {
 } from "./hooks";
 import { PlacePickerAdvancedPoint as PlacePickerAdvancedPointClass } from "./utils";
 
-type NonEmptyArray<T> = [T, ...T[]];
-
 const placeTypeValues = ["MapPoint", "Address", "Place"] as const;
 type PlaceType = (typeof placeTypeValues)[number];
 
@@ -356,7 +354,6 @@ const PlacePickerAdvancedPoint = ({
 
 export { placeTypeValues };
 export {
-  type NonEmptyArray,
   type PlaceType,
   type PlaceItem,
   type PlacePickerAdvancedValue,
