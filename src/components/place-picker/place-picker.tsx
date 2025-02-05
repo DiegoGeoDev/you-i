@@ -112,7 +112,7 @@ const PlacePickerContent = React.forwardRef<
 PlacePickerContent.displayName = "PlacePickerContent";
 
 type PlacePickerMapProps = {
-  pointStyle: OlStyle | OlStyle[] | OlStyleFunction | undefined;
+  pointStyle?: OlStyle | OlStyle[] | OlStyleFunction;
 } & React.ComponentPropsWithoutRef<typeof MapContainer>;
 
 const PlacePickerMap = React.forwardRef<
